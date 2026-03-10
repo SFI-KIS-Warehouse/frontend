@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация - Aboba Warehouse</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Aboba Warehouse</h1>
+            <p>Вход в систему управления складом</p>
+        </div>
+
+        <div id="alert" class="alert alert-error">
+            <span id="alertMessage"></span>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="login">Логин</label>
+                <input type="text" id="login" name="login" 
+                       placeholder="Введите логин" required 
+                       autocomplete="username">
+                <div id="loginError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" id="password" name="password" 
+                       placeholder="Введите пароль" required
+                       autocomplete="current-password">
+                <div id="passwordError" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="rememberMe" checked>
+                    Запомнить меня
+                </label>
+            </div>
+
+            <button type="submit" id="loginButton" class="login-button">
+                <span>Войти</span>
+                <div class="spinner"></div>
+            </button>
+        </form>
+
+        <div class="demo-credentials">
+            <p><strong>Демо-доступ:</strong></p>
+            <p>Любой логин и пароль (бэкенд не проверяет)</p>
+            <p>Нажмите "Войти" для теста</p>
+        </div>
+
+        <div class="info-text">
+            <a href="#">Забыли пароль?</a> | <a href="#">Регистрация</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

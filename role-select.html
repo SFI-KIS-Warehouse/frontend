@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выбор роли - Aboba Warehouse</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/role-select.css">
+</head>
+<body>
+    <div class="role-container">
+        <div class="role-header">
+            <h1>Добро пожаловать в Aboba Warehouse!</h1>
+            <p>Выберите режим работы с системой</p>
+        </div>
+
+        <div class="role-cards">
+            <!-- Карточка менеджера -->
+            <div class="role-card" data-role="manager" id="managerCard">
+                <div class="role-icon">👔</div>
+                <h2>Панель менеджера</h2>
+                <p>Полный доступ к управлению складом</p>
+                <span class="role-badge">Административный доступ</span>
+                <ul class="role-features">
+                    <li>Управление товарами</li>
+                    <li>Управление поставщиками</li>
+                    <li>Отчеты и аналитика</li>
+                    <li>Настройка системы</li>
+                    <li>Управление пользователями</li>
+                </ul>
+            </div>
+
+            <!-- Карточка оператора -->
+            <div class="role-card" data-role="operator" id="operatorCard">
+                <div class="role-icon">📦</div>
+                <h2>Товары и движения</h2>
+                <p>Работа с товарами и складскими операциями</p>
+                <span class="role-badge">Операционный доступ</span>
+                <ul class="role-features">
+                    <li>Просмотр товаров</li>
+                    <li>Приход товара</li>
+                    <li>Расход товара</li>
+                    <li>Инвентаризация</li>
+                    <li>Отчеты по движениям</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="remember-choice">
+            <label>
+                <input type="checkbox" id="rememberRole" checked>
+                Запомнить выбор
+            </label>
+        </div>
+
+        <button class="continue-button" id="continueBtn" disabled>
+            Продолжить
+        </button>
+
+        <div style="text-align: center;">
+            <a href="login.html" class="back-button">← Вернуться к авторизации</a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/role-select.js"></script>
+</body>
+</html>

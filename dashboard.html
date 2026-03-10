@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - Aboba Warehouse</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Aboba Warehouse</div>
+        <div class="navbar-menu">
+            <span id="userName">Пользователь</span>
+            <button class="logout-button" id="logoutBtn">Выйти</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-card">
+            <h2>Добро пожаловать в систему управления складом!</h2>
+            <p>Ваш токен авторизации:</p>
+            <div class="token-info" id="tokenDisplay"></div>
+        </div>
+
+        <h2>Меню системы</h2>
+        <div class="menu-grid">
+            <a href="/products" class="menu-card">
+                <h3>📦 Товары</h3>
+                <p>Управление товарами на складе</p>
+            </a>
+            <a href="/providers" class="menu-card">
+                <h3>🏢 Поставщики</h3>
+                <p>Список поставщиков</p>
+            </a>
+            <a href="/units" class="menu-card">
+                <h3>⚖️ Единицы измерения</h3>
+                <p>Настройка единиц измерения</p>
+            </a>
+            <a href="/reports" class="menu-card">
+                <h3>📊 Отчеты</h3>
+                <p>Аналитика и отчетность</p>
+            </a>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

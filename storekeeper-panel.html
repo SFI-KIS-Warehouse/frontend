@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель кладовщика - Aboba Warehouse</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/storekeeper-panel.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Aboba Warehouse</div>
+        <div class="navbar-menu">
+            <span>📦 Панель кладовщика</span>
+            <span id="userName">Пользователь</span>
+            <button class="logout-button" id="logoutBtn">Выйти</button>
+        </div>
+    </nav>
+
+    <div class="container storekeeper-container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="shipments">Отгрузки</button>
+            <button class="tab-btn" data-tab="receipts">Поступления</button>
+            <button class="tab-btn" data-tab="schedule">График поставок</button>
+            <button class="tab-btn" data-tab="inventory">Инвентаризация</button>
+        </div>
+
+        <!-- Вкладка Отгрузки -->
+        <div id="shipmentsTab" class="tab-content active">
+            <div class="tab-header">
+                <h2>Управление отгрузками</h2>
+                <button class="btn btn-primary" onclick="showCreateShipmentModal()">
+                    ➕ Создать отгрузку
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="shipmentsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                            <th>Товаров</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipmentsTableBody">
+                        <tr><td colspan="5" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Вкладка Поступления -->
+        <div id="receiptsTab" class="tab-content">
+            <div class="tab-header">
+                <h2>Приходные ордера</h2>
+                <button class="btn btn-primary" onclick="showCreateReceiptModal()">
+                    ➕ Создать приход
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="receiptsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Дата</th>
+                            <th>Товаров</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receiptsTableBody">
+                        <tr><td colspan="4" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Вкладка График поставок -->
+        <div id="scheduleTab" class="tab-content">
+            <div class="tab-header">
+                <h2>График поставок</h2>
+                <button class="btn btn-primary" onclick="showAddScheduleModal()">
+                    ➕ Добавить в график
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="scheduleTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Дата</th>
+                            <th>Договор</th>
+                            <th>Товар</th>
+                            <th>Количество</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody">
+                        <tr><td colspan="5" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Вкладка Инвентаризация -->
+        <div id="inventoryTab" class="tab-content">
+            <div class="tab-header">
+                <h2>Инвентаризация</h2>
+                <button class="btn btn-primary" onclick="startInventory()">
+                    ▶️ Начать инвентаризацию
+                </button>
+            </div>
+            <div class="inventory-controls">
+                <div class="form-group">
+                    <label>Штрих-код / ID товара</label>
+                    <input type="text" id="barcodeInput" placeholder="Отсканируйте или введите ID">
+                </div>
+                <div class="form-group">
+                    <label>Фактическое количество</label>
+                    <input type="number" id="actualCount" min="0">
+                </div>
+                <button class="btn btn-primary" onclick="addInventoryItem()">Добавить</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table" id="inventoryTable">
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Ожидаемое</th>
+                            <th>Фактическое</th>
+                            <th>Расхождение</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/storekeeper-panel.js"></script>
+</body>
+</html>
