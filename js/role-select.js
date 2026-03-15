@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const managerCard = document.getElementById('managerCard');
     const operatorCard = document.getElementById('operatorCard');
+    const storekeeperCard = document.getElementById('storekeeperCard');
     const continueBtn = document.getElementById('continueBtn');
     const rememberCheckbox = document.getElementById('rememberRole');
     
@@ -27,31 +28,61 @@ document.addEventListener('DOMContentLoaded', () => {
      * Сброс выделения всех карточек
      */
     function resetSelection() {
-        managerCard.classList.remove('selected');
-        operatorCard.classList.remove('selected');
+        [managerCard, operatorCard, storekeeperCard].forEach(card => {
+            if (card) card.classList.remove('selected');
+        });
     }
 
     /**
      * Выбор роли
-     * @param {string} role - Выбранная роль
      */
     function selectRole(role) {
         resetSelection();
         
-        if (role === 'manager') {
-            managerCard.classList.add('selected');
-            selectedRole = 'manager';
-        } else if (role === 'operator') {
-            operatorCard.classList.add('selected');
-            selectedRole = 'operator';
-        }
+        const cardMap = {
+            'manager': managerCard,
+            'operator': operatorCard,
+            'storekeeper': storekeeperCard
+        };
         
-        continueBtn.disabled = false;
+        const card = cardMap[role];
+        if (card) {
+            card.classList.add('selected');
+            selectedRole = role;
+            continueBtn.disabled = false;
+        }
     }
 
-    // Обработчики клика по карточкам
-    managerCard.addEventListener('click', () => selectRole('manager'));
-    operatorCard.addEventListener('click', () => selectRole('operator'));
+    // Обработчики кликов
+    if (managerCard) {
+        managerCard.addEventListener('click', () => selectRole('manager'));
+        managerCard.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectRole('manager');
+            }
+        });
+    }
+
+    if (operatorCard) {
+        operatorCard.addEventListener('click', () => selectRole('operator'));
+        operatorCard.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectRole('operator');
+            }
+        });
+    }
+
+    if (storekeeperCard) {
+        storekeeperCard.addEventListener('click', () => selectRole('storekeeper'));
+        storekeeperCard.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectRole('storekeeper');
+            }
+        });
+    }
 
     // Обработка продолжения
     continueBtn.addEventListener('click', () => {
@@ -62,22 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Добавляем наведение с клавиатуры для доступности
-    managerCard.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            selectRole('manager');
-        }
+    // Делаем карточки фокусируемыми для доступности
+    [managerCard, operatorCard, storekeeperCard].forEach(card => {
+        if (card) card.setAttribute('tabindex', '0');
     });
-
-    operatorCard.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            selectRole('operator');
-        }
-    });
-
-    // Делаем карточки фокусируемыми
-    managerCard.setAttribute('tabindex', '0');
-    operatorCard.setAttribute('tabindex', '0');
 });
