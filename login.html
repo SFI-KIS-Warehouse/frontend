@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Авторизация - Aboba Warehouse</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
     <div class="login-container">
@@ -50,16 +52,13 @@
 
         <div class="demo-credentials">
             <p><strong>Демо-доступ:</strong></p>
-            <p>Любой логин и пароль (бэкенд не проверяет)</p>
-            <p>Нажмите "Войти" для теста</p>
-        </div>
-
-        <div class="info-text">
-            <a href="#">Забыли пароль?</a> | <a href="#">Регистрация</a>
+            <p>Любой логин и пароль (для теста)</p>
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/login.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/login.js"></script>
 </body>
 </html>
