@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Тест подключения - Aboba Warehouse</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        .error {
+            color: #f44336;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #667eea;
+            color: white;
+            font-size: 14px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔌 Тест подключения к бэкенду</h1>
+    <p>Сервер: <strong>https://91.209.135.123</strong></p>
+
+    <div class="card">
+        <h2>Доступные тесты:</h2>
+        <div>
+            <button onclick="testUnits()">📏 Тест Units API</button>
+            <button onclick="testLogin()">🔑 Тест Login API</button>
+            <button onclick="testProviders()">🏢 Тест Providers API</button>
+            <button onclick="testProducts()">📦 Тест Products API</button>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Результат:</h2>
+        <div id="result" class="status">Нажмите кнопку для теста</div>
+        <pre id="details"></pre>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://91.209.135.123';
+
+        async function testUnits() {
+            const result = document.getElementById('result');
+            const details = document.getElementById('details');
+            
+            result.innerHTML = '⏳ Загрузка...';
+            result.className = 'status';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/units`, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = '✅ Units API доступен!';
+                    result.className = 'status success';
+                    details.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Ошибка: ${error.message}`;
+                result.className = 'status error';
+                details.textContent = '';
+            }
+        }
+
+        async function testLogin() {
+            const result = document.getElementById('result');
+            const details = document.getElementById('details');
+            
+            result.innerHTML = '⏳ Загрузка...';
+            result.className = 'status';
+            
+            try {
+                const response = await fetch(`${BASE_URL}/user/login?login=test&password=test`, {
+                    headers: {
+                        'Accept': 'text/plain'
+                    }
+                });
+                
+                if (response.ok) {
+                    const token = await response.text();
+                    result.innerHTML = '✅ Login API доступен!';
+                    result.className = 'status success';
+                    details.textContent = 'Токен получен: ' + token.substring(0, 50) + '...';
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Ошибка: ${error.message}`;
+                result.className = 'status error';
+                details.textContent = '';
+            }
+        }
+
+        async function testProviders() {
+            const result = document.getElementById('result');
+            const details = document.getElementById('details');
+            
+            result.innerHTML = '⏳ Загрузка...';
+            result.className = 'status';
+            
+            try {
+                // Сначала получаем токен
+                const loginResponse = await fetch(`${BASE_URL}/user/login?login=test&password=test`);
+                const token = await loginResponse.text();
+                
+                const response = await fetch(`${BASE_URL}/providers`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = '✅ Providers API доступен!';
+                    result.className = 'status success';
+                    details.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Ошибка: ${error.message}`;
+                result.className = 'status error';
+                details.textContent = '';
+            }
+        }
+
+        async function testProducts() {
+            const result = document.getElementById('result');
+            const details = document.getElementById('details');
+            
+            result.innerHTML = '⏳ Загрузка...';
+            result.className = 'status';
+            
+            try {
+                // Сначала получаем токен
+                const loginResponse = await fetch(`${BASE_URL}/user/login?login=test&password=test`);
+                const token = await loginResponse.text();
+                
+                const response = await fetch(`${BASE_URL}/products`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    result.innerHTML = '✅ Products API доступен!';
+                    result.className = 'status success';
+                    details.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                result.innerHTML = `❌ Ошибка: ${error.message}`;
+                result.className = 'status error';
+                details.textContent = '';
+            }
+        }
+    </script>
+</body>
+</html>
