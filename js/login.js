@@ -3,9 +3,9 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Если уже авторизован, перенаправляем на главную
+    // Если уже авторизован, перенаправляем на выбор роли
     if (authService.isAuthenticated()) {
-        authService.redirectToDashboard();
+        authService.redirectToRoleSelect();
         return;
     }
 
@@ -23,8 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Показать сообщение
-     * @param {string} message - Текст сообщения
-     * @param {string} type - Тип сообщения (error/success)
      */
     function showMessage(message, type = 'error') {
         alert.className = `alert alert-${type} show`;
@@ -32,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setTimeout(() => {
             alert.classList.remove('show');
-        }, 5000);
+        }, CONFIG.NOTIFICATION_DURATION);
     }
 
     /**
@@ -49,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Установить состояние загрузки
-     * @param {boolean} loading
      */
     function setLoading(loading) {
         if (loading) {
@@ -62,10 +59,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Валидация полей в реальном времени
+     * Валидация полей
      */
+    function validateLogin(value) {
+        if (!value || value.trim().length === 0) {
+            return 'Логин не может быть пустым';
+        }
+        if (value.length < 3) {
+            return 'Логин должен содержать минимум 3 символа';
+        }
+        return '';
+    }
+
+    function validatePassword(value) {
+        if (!value || value.length === 0) {
+            return 'Пароль не может быть пустым';
+        }
+        if (value.length < 3) {
+            return 'Пароль должен содержать минимум 3 символа';
+        }
+        return '';
+    }
+
+    // Валидация в реальном времени
     loginInput.addEventListener('input', () => {
-        const error = FormValidator.validateLogin(loginInput.value);
+        const error = validateLogin(loginInput.value);
         if (error) {
             loginInput.classList.add('error');
             loginError.textContent = error;
@@ -77,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     passwordInput.addEventListener('input', () => {
-        const error = FormValidator.validatePassword(passwordInput.value);
+        const error = validatePassword(passwordInput.value);
         if (error) {
             passwordInput.classList.add('error');
             passwordError.textContent = error;
@@ -88,9 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    /**
-     * Обработка отправки формы
-     */
+    // Обработка отправки формы
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -101,8 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const remember = rememberCheckbox ? rememberCheckbox.checked : true;
 
         // Валидация
-        const loginErrorText = FormValidator.validateLogin(login);
-        const passwordErrorText = FormValidator.validatePassword(password);
+        const loginErrorText = validateLogin(login);
+        const passwordErrorText = validatePassword(password);
 
         if (loginErrorText || passwordErrorText) {
             if (loginErrorText) {
@@ -129,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showMessage('Успешный вход! Перенаправление...', 'success');
                 
                 setTimeout(() => {
-                    authService.redirectToDashboard();
+                    authService.redirectToRoleSelect();
                 }, 1000);
             } else {
                 showMessage(result.error || 'Ошибка авторизации');
@@ -141,8 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Добавляем тестовые данные для демо
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    // Добавляем тестовые данные для демо в режиме отладки
+    if (CONFIG.DEBUG) {
         loginInput.value = 'admin';
         passwordInput.value = 'admin';
     }
