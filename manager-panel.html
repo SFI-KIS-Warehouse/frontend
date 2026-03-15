@@ -3,136 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель менеджера - Aboba Warehouse</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/manager-panel.css">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Выбор роли - Aboba Warehouse</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/role-select.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-brand">Aboba Warehouse</div>
-        <div class="navbar-menu">
-            <span>👔 Панель менеджера</span>
-            <span id="userName">Пользователь</span>
-            <button class="logout-button" id="logoutBtn">Выйти</button>
-        </div>
-    </nav>
-
-    <div class="container manager-container">
-        <!-- Вкладки -->
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="providers">Поставщики</button>
-            <button class="tab-btn" data-tab="products">Товары</button>
-            <button class="tab-btn" data-tab="units">Единицы измерения</button>
-            <button class="tab-btn" data-tab="contracts">Договоры</button>
+    <div class="role-container">
+        <div class="role-header">
+            <h1>Добро пожаловать в Aboba Warehouse!</h1>
+            <p>Выберите режим работы с системой</p>
         </div>
 
-        <!-- Вкладка Поставщики -->
-        <div id="providersTab" class="tab-content active">
-            <div class="tab-header">
-                <h2>Управление поставщиками</h2>
-                <button class="btn btn-primary" onclick="showAddProviderModal()">
-                    ➕ Добавить поставщика
-                </button>
+        <div class="role-cards">
+            <!-- Карточка менеджера -->
+            <div class="role-card" data-role="manager" id="managerCard" tabindex="0">
+                <div class="role-icon">👔</div>
+                <h2>Панель менеджера</h2>
+                <p>Полный доступ к управлению складом</p>
+                <span class="role-badge">Административный доступ</span>
+                <ul class="role-features">
+                    <li>Управление поставщиками</li>
+                    <li>Управление товарами</li>
+                    <li>Управление договорами</li>
+                    <li>Отчеты и аналитика</li>
+                </ul>
             </div>
-            <div class="table-container">
-                <table class="data-table" id="providersTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Наименование</th>
-                            <th>ИНН</th>
-                            <th>БИК</th>
-                            <th>Расчетный счет</th>
-                            <th>Директор</th>
-                            <th>Бухгалтер</th>
-                        </tr>
-                    </thead>
-                    <tbody id="providersTableBody">
-                        <tr><td colspan="7" class="loading">Загрузка...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
 
-        <!-- Вкладка Товары -->
-        <div id="productsTab" class="tab-content">
-            <div class="tab-header">
-                <h2>Управление товарами</h2>
-                <button class="btn btn-primary" onclick="showAddProductModal()">
-                    ➕ Добавить товар
-                </button>
+            <!-- Карточка оператора -->
+            <div class="role-card" data-role="operator" id="operatorCard" tabindex="0">
+                <div class="role-icon">📦</div>
+                <h2>Товары и движения</h2>
+                <p>Работа с товарами и складскими операциями</p>
+                <span class="role-badge">Операционный доступ</span>
+                <ul class="role-features">
+                    <li>Просмотр товаров</li>
+                    <li>Приход товара</li>
+                    <li>Расход товара</li>
+                    <li>Инвентаризация</li>
+                </ul>
             </div>
-            <div class="table-container">
-                <table class="data-table" id="productsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Наименование</th>
-                            <th>Единица измерения</th>
-                            <th>Критический остаток</th>
-                        </tr>
-                    </thead>
-                    <tbody id="productsTableBody">
-                        <tr><td colspan="4" class="loading">Загрузка...</td></tr>
-                    </tbody>
-                </table>
+
+            <!-- Карточка кладовщика -->
+            <div class="role-card" data-role="storekeeper" id="storekeeperCard" tabindex="0">
+                <div class="role-icon">📋</div>
+                <h2>Панель кладовщика</h2>
+                <p>Отгрузки, поступления, инвентаризация</p>
+                <span class="role-badge">Складской доступ</span>
+                <ul class="role-features">
+                    <li>Управление отгрузками</li>
+                    <li>Приходные ордера</li>
+                    <li>График поставок</li>
+                    <li>Инвентаризация</li>
+                </ul>
             </div>
         </div>
 
-        <!-- Вкладка Единицы измерения -->
-        <div id="unitsTab" class="tab-content">
-            <div class="tab-header">
-                <h2>Единицы измерения</h2>
-                <button class="btn btn-primary" onclick="showAddUnitModal()">
-                    ➕ Добавить единицу измерения
-                </button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="unitsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Наименование</th>
-                        </tr>
-                    </thead>
-                    <tbody id="unitsTableBody">
-                        <tr><td colspan="2" class="loading">Загрузка...</td></tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="remember-choice">
+            <label>
+                <input type="checkbox" id="rememberRole" checked>
+                Запомнить выбор
+            </label>
         </div>
 
-        <!-- Вкладка Договоры -->
-        <div id="contractsTab" class="tab-content">
-            <div class="tab-header">
-                <h2>Договоры с поставщиками</h2>
-                <button class="btn btn-primary" onclick="showAddContractModal()">
-                    ➕ Создать договор
-                </button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="contractsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Поставщик</th>
-                            <th>Статус</th>
-                            <th>Товаров</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody id="contractsTableBody">
-                        <tr><td colspan="5" class="loading">Загрузка...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <button class="continue-button" id="continueBtn" disabled>
+            Продолжить
+        </button>
     </div>
 
-    <script src="js/auth.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/components.js"></script>
-    <script src="js/manager-panel.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/role-select.js"></script>
 </body>
 </html>
