@@ -46,6 +46,14 @@ function setupTabs() {
     });
 }
 
+function updateUserInfo() {
+    const userNameElement = document.getElementById('userName');
+    if (userNameElement) {
+        const userInfo = authService.getUserInfo();
+        userNameElement.textContent = userInfo?.name || 'Менеджер';
+    }
+}
+
 async function loadAllData() {
     try {
         await Promise.all([
@@ -56,13 +64,6 @@ async function loadAllData() {
         ]);
     } catch (error) {
         showNotification('Ошибка загрузки данных', 'error');
-    }
-}
-
-function updateUserInfo() {
-    const userNameElement = document.getElementById('userName');
-    if (userNameElement) {
-        userNameElement.textContent = 'Менеджер';
     }
 }
 
@@ -143,7 +144,7 @@ function showAddProviderModal() {
         
         const providerData = {
             name: document.getElementById('providerName').value,
-            int: parseInt(document.getElementById('providerItn').value), // Внимание: в API поле INT (опечатка в бэкенде)
+            int: parseInt(document.getElementById('providerItn').value),
             bic: parseInt(document.getElementById('providerBic').value),
             settlementAccount: parseInt(document.getElementById('providerAccount').value),
             directorFullName: document.getElementById('providerDirector').value,
@@ -267,7 +268,6 @@ function renderProductsTable() {
 }
 
 function showAddProductModal() {
-    // Сначала загружаем единицы измерения, если их нет
     if (!units.length) {
         loadUnits().then(() => showAddProductModal());
         return;
@@ -351,8 +351,8 @@ function renderContractsTable() {
             <td>${contract.id}</td>
             <td>${contract.provider?.name || '-'}</td>
             <td>
-                <span class="status-badge status-${getStatusClass(contract.status)}">
-                    ${getStatusText(contract.status)}
+                <span class="status-badge status-${CONFIG.CONTRACT_STATUSES[contract.status]?.class || 'created'}">
+                    ${CONFIG.CONTRACT_STATUSES[contract.status]?.name || 'Неизвестно'}
                 </span>
             </td>
             <td>${contract.productInfo?.length || 0}</td>
@@ -363,26 +363,6 @@ function renderContractsTable() {
             </td>
         </tr>
     `).join('');
-}
-
-function getStatusClass(status) {
-    const statusMap = {
-        0: 'created',
-        1: 'approved',
-        2: 'signed',
-        3: 'cancelled'
-    };
-    return statusMap[status] || 'created';
-}
-
-function getStatusText(status) {
-    const statusMap = {
-        0: 'Создан',
-        1: 'Утверждён',
-        2: 'Подписан',
-        3: 'Аннулирован'
-    };
-    return statusMap[status] || 'Неизвестно';
 }
 
 async function viewContract(id) {
@@ -414,8 +394,8 @@ function showContractModal(contract) {
             <div class="contract-details">
                 <p><strong>Поставщик:</strong> ${contract.provider?.name || '-'}</p>
                 <p><strong>Статус:</strong> 
-                    <span class="status-badge status-${getStatusClass(contract.status)}">
-                        ${getStatusText(contract.status)}
+                    <span class="status-badge status-${CONFIG.CONTRACT_STATUSES[contract.status]?.class || 'created'}">
+                        ${CONFIG.CONTRACT_STATUSES[contract.status]?.name || 'Неизвестно'}
                     </span>
                 </p>
                 
@@ -442,10 +422,11 @@ function showContractModal(contract) {
 
                 <h4>Изменить статус:</h4>
                 <select id="changeStatusSelect" class="form-control">
-                    <option value="0" ${contract.status === 0 ? 'selected' : ''}>Создан</option>
-                    <option value="1" ${contract.status === 1 ? 'selected' : ''}>Утверждён</option>
-                    <option value="2" ${contract.status === 2 ? 'selected' : ''}>Подписан</option>
-                    <option value="3" ${contract.status === 3 ? 'selected' : ''}>Аннулирован</option>
+                    ${Object.entries(CONFIG.CONTRACT_STATUSES).map(([key, value]) => `
+                        <option value="${key}" ${contract.status === parseInt(key) ? 'selected' : ''}>
+                            ${value.name}
+                        </option>
+                    `).join('')}
                 </select>
 
                 <div class="form-actions">
@@ -476,7 +457,6 @@ async function changeContractStatus(id) {
 }
 
 function showAddContractModal() {
-    // Загружаем данные, если их нет
     Promise.all([
         providers.length ? Promise.resolve() : loadProviders(),
         products.length ? Promise.resolve() : loadProducts()
@@ -511,7 +491,7 @@ function showAddContractModal() {
 
         modal.show(modalContent);
         window.productCounter = 0;
-        addProductToContract(); // Добавляем первый товар
+        addProductToContract();
     });
 }
 
@@ -602,35 +582,7 @@ document.addEventListener('submit', async (e) => {
     }
 });
 
-/**
- * Показать уведомление
- */
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 20px;
-        background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
-        color: white;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 2000;
-        animation: slideIn 0.3s ease;
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
-}
-
-// Делаем функции глобальными для вызова из HTML
+// Глобальные функции
 window.showAddProviderModal = showAddProviderModal;
 window.showAddUnitModal = showAddUnitModal;
 window.showAddProductModal = showAddProductModal;
