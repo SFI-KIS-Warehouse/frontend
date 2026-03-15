@@ -14,13 +14,12 @@ class AuthService {
         try {
             const token = await api.login(login, password);
             
-            // Пытаемся декодировать токен для получения роли
-            let role = null;
+            // Пытаемся декодировать токен для получения информации
+            let userData = null;
             try {
-                const payload = this.decodeToken(token);
-                // Определяем роль по payload (зависит от того, что кладет бэкенд в токен)
-                if (payload.role) {
-                    role = this.mapRole(payload.role);
+                userData = this.decodeToken(token);
+                if (CONFIG.DEBUG) {
+                    console.log('Token decoded:', userData);
                 }
             } catch (e) {
                 console.warn('Could not decode token', e);
@@ -29,9 +28,10 @@ class AuthService {
             return {
                 success: true,
                 token: token,
-                role: role
+                userData: userData
             };
         } catch (error) {
+            console.error('Login error:', error);
             return {
                 success: false,
                 error: error.message
@@ -43,23 +43,15 @@ class AuthService {
      * Декодирование JWT токена
      */
     decodeToken(token) {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(atob(base64));
-        return payload;
-    }
-
-    /**
-     * Маппинг роли из бэкенда
-     */
-    mapRole(backendRole) {
-        // В бэкенде есть UserRoles: Director, Manager, Storekeeper
-        const roleMap = {
-            'Director': 'director',
-            'Manager': 'manager',
-            'Storekeeper': 'storekeeper'
-        };
-        return roleMap[backendRole] || 'operator';
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(atob(base64));
+            return payload;
+        } catch (e) {
+            console.error('Error decoding token:', e);
+            return null;
+        }
     }
 
     /**
@@ -81,7 +73,7 @@ class AuthService {
     }
 
     /**
-     * Удалить токен
+     * Удалить токен (выход)
      */
     logout() {
         localStorage.removeItem(this.TOKEN_KEY);
@@ -91,14 +83,14 @@ class AuthService {
     }
 
     /**
-     * Проверить авторизацию
+     * Проверить, авторизован ли пользователь
      */
     isAuthenticated() {
         return !!this.getToken();
     }
 
     /**
-     * Сохранить роль
+     * Сохранить роль пользователя
      */
     saveUserRole(role, remember = true) {
         if (remember) {
@@ -109,7 +101,7 @@ class AuthService {
     }
 
     /**
-     * Получить роль
+     * Получить роль пользователя
      */
     getUserRole() {
         return localStorage.getItem(this.USER_ROLE_KEY) || sessionStorage.getItem(this.USER_ROLE_KEY);
@@ -130,10 +122,11 @@ class AuthService {
     }
 
     /**
-     * Перенаправить в соответствующий раздел
+     * Перенаправить в соответствующий раздел на основе роли
      */
     redirectToDashboard() {
         const role = this.getUserRole();
+        
         switch(role) {
             case 'manager':
                 window.location.href = '/manager-panel.html';
@@ -146,6 +139,20 @@ class AuthService {
                 break;
             default:
                 this.redirectToRoleSelect();
+        }
+    }
+
+    /**
+     * Получить информацию о пользователе из токена
+     */
+    getUserInfo() {
+        const token = this.getToken();
+        if (!token) return null;
+        
+        try {
+            return this.decodeToken(token);
+        } catch {
+            return null;
         }
     }
 }
