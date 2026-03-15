@@ -1,112 +1,20 @@
-/* Стили для панели кладовщика */
+/* ============ Стили для панели кладовщика ============ */
 .storekeeper-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
-.tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    flex-wrap: wrap;
-}
-
-.tab-btn {
-    padding: 12px 24px;
-    background: none;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #666;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.tab-btn:hover {
-    color: #667eea;
-    background: #f8f9fa;
-}
-
-.tab-btn.active {
-    color: #667eea;
-    border-bottom: 2px solid #667eea;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-.tab-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.tab-header h2 {
-    color: #333;
-    font-size: 24px;
-}
-
-.table-container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow-x: auto;
-    margin-bottom: 20px;
-}
-
-.data-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.data-table th {
-    background: #f8f9fa;
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-    color: #555;
-    font-size: 14px;
-    border-bottom: 2px solid #eee;
-}
-
-.data-table td {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    color: #333;
-}
-
-.data-table tr:hover {
-    background: #f8f9fa;
-}
-
-.data-table .loading {
-    text-align: center;
-    color: #999;
-    padding: 40px;
-}
-
-/* Инвентаризация */
+/* ============ Инвентаризация ============ */
 .inventory-controls {
     background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
     display: grid;
     grid-template-columns: 1fr 1fr auto;
-    gap: 15px;
+    gap: 20px;
     align-items: end;
 }
 
@@ -114,76 +22,144 @@
     margin-bottom: 0;
 }
 
+.inventory-controls .form-group label {
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.inventory-controls input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e1e5e9;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+
+.inventory-controls input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.inventory-controls button {
+    padding: 14px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    height: fit-content;
+    white-space: nowrap;
+}
+
+.inventory-controls button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Расхождения в инвентаризации */
 .discrepancy-positive {
     color: #4caf50;
     font-weight: bold;
+    font-size: 16px;
 }
 
 .discrepancy-negative {
     color: #f44336;
     font-weight: bold;
+    font-size: 16px;
 }
 
-/* Статусы */
-.status-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
+/* ============ Детали отгрузки ============ */
+.shipment-details {
+    padding: 15px;
+}
+
+.shipment-details p {
+    margin: 12px 0;
+    color: #555;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.shipment-details h4 {
+    color: #333;
+    margin: 25px 0 15px;
+    font-size: 18px;
     font-weight: 600;
 }
 
-.status-created {
-    background: #fff3cd;
-    color: #856404;
+.shipment-details .status-badge {
+    margin-left: 10px;
+    padding: 6px 14px;
 }
 
-.status-shipped {
-    background: #d4edda;
-    color: #155724;
-}
-
-/* Кнопки действий */
+/* ============ Кнопки для отгрузок ============ */
 .action-buttons {
     display: flex;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 .btn-icon {
-    padding: 6px 12px;
+    padding: 8px 16px;
     border: none;
-    border-radius: 4px;
-    font-size: 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 2px solid #e1e5e9;
+    color: #555;
 }
 
-.btn-view {
+.btn-icon:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-icon.btn-view:hover {
     background: #17a2b8;
+    border-color: #17a2b8;
     color: white;
 }
 
-.btn-ship {
+.btn-icon.btn-ship:hover {
     background: #28a745;
+    border-color: #28a745;
     color: white;
 }
 
-.btn-print {
+.btn-icon.btn-print:hover {
     background: #6c757d;
+    border-color: #6c757d;
     color: white;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .tabs {
-        flex-direction: column;
-    }
-    
-    .tab-btn {
-        width: 100%;
-    }
-    
-    .inventory-controls {
-        grid-template-columns: 1fr;
-    }
+/* ============ Товары в отгрузке ============ */
+.product-item {
+    background: #f8f9fa;
+    border: 2px solid #e1e5e9;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.product-item:hover {
+    border-color: #17a2b8;
+    box-shadow: 0 8px 20px rgba(23, 162, 184, 0.1);
+}
+
+.product-item-header {
+    display: flex
 }
