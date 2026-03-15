@@ -8,7 +8,6 @@ class Modal {
     }
 
     createModalContainer() {
-        // Создаем контейнер для модального окна, если его нет
         if (!document.getElementById('modalContainer')) {
             const container = document.createElement('div');
             container.id = 'modalContainer';
@@ -34,10 +33,8 @@ class Modal {
         const container = document.getElementById('modalContainer');
         container.innerHTML = modalHtml;
 
-        // Добавляем стили
         this.addModalStyles();
 
-        // Обработчики закрытия
         const closeBtn = container.querySelector('.modal-close');
         const overlay = container.querySelector('.modal-overlay');
 
@@ -45,6 +42,13 @@ class Modal {
         overlay.onclick = (e) => {
             if (e.target === overlay) this.hide();
         };
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                this.hide();
+            }
+        }.bind(this));
     }
 
     hide() {
@@ -142,6 +146,13 @@ class Modal {
                     gap: 15px;
                 }
 
+                .form-actions {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-top: 20px;
+                }
+
                 .btn {
                     padding: 10px 20px;
                     border: none;
@@ -182,8 +193,8 @@ class Modal {
 
                 .status-badge {
                     display: inline-block;
-                    padding: 4px 8px;
-                    border-radius: 4px;
+                    padding: 6px 12px;
+                    border-radius: 20px;
                     font-size: 12px;
                     font-weight: 600;
                 }
@@ -206,6 +217,11 @@ class Modal {
                 .status-cancelled {
                     background: #f8d7da;
                     color: #721c24;
+                }
+
+                .status-shipped {
+                    background: #d4edda;
+                    color: #155724;
                 }
 
                 .product-item {
@@ -252,3 +268,46 @@ class Modal {
 
 // Глобальный экземпляр модального окна
 const modal = new Modal();
+
+/**
+ * Функция для показа уведомлений
+ */
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
+        color: white;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        z-index: 2000;
+        animation: slideIn 0.3s ease;
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, CONFIG.NOTIFICATION_DURATION);
+}
+
+/**
+ * Debounce функция для поиска
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
