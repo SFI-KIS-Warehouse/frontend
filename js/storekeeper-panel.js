@@ -49,7 +49,8 @@ function setupTabs() {
 function updateUserInfo() {
     const userNameElement = document.getElementById('userName');
     if (userNameElement) {
-        userNameElement.textContent = 'Кладовщик';
+        const userInfo = authService.getUserInfo();
+        userNameElement.textContent = userInfo?.name || 'Кладовщик';
     }
 }
 
@@ -90,8 +91,8 @@ function renderShipmentsTable() {
             <td>${shipment.id}</td>
             <td>${shipment.time ? new Date(shipment.time).toLocaleString() : 'Не отгружено'}</td>
             <td>
-                <span class="status-badge status-${shipment.status === 0 ? 'created' : 'shipped'}">
-                    ${shipment.status === 0 ? 'Создан' : 'Отгружен'}
+                <span class="status-badge status-${CONFIG.SHIPMENT_STATUSES[shipment.status]?.class || 'created'}">
+                    ${CONFIG.SHIPMENT_STATUSES[shipment.status]?.name || 'Неизвестно'}
                 </span>
             </td>
             <td>${shipment.productInfo?.length || 0}</td>
@@ -137,8 +138,8 @@ function showShipmentModal(shipment) {
             <div class="shipment-details">
                 <p><strong>Дата:</strong> ${shipment.time ? new Date(shipment.time).toLocaleString() : 'Не отгружено'}</p>
                 <p><strong>Статус:</strong> 
-                    <span class="status-badge status-${shipment.status === 0 ? 'created' : 'shipped'}">
-                        ${shipment.status === 0 ? 'Создан' : 'Отгружен'}
+                    <span class="status-badge status-${CONFIG.SHIPMENT_STATUSES[shipment.status]?.class || 'created'}">
+                        ${CONFIG.SHIPMENT_STATUSES[shipment.status]?.name || 'Неизвестно'}
                     </span>
                 </p>
                 
@@ -190,7 +191,6 @@ async function shipShipment(id) {
 }
 
 function printShipment(id) {
-    // Создаем печатную форму
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
         <html>
@@ -207,7 +207,6 @@ function printShipment(id) {
                 <h2>Отгрузка №${id}</h2>
                 <p>Дата: ${new Date().toLocaleString()}</p>
                 <p>Кладовщик: ${document.getElementById('userName').textContent}</p>
-                <!-- Здесь будет таблица с товарами -->
                 <script>
                     window.onload = function() { window.print(); }
                 <\/script>
@@ -218,7 +217,6 @@ function printShipment(id) {
 }
 
 function showCreateShipmentModal() {
-    // Загружаем товары
     api.getProducts().then(products => {
         const modalContent = {
             title: 'Создание отгрузки',
@@ -364,7 +362,6 @@ async function addInventoryItem() {
     }
 
     try {
-        // Ищем товар по ID
         const product = await api.getProduct(parseInt(barcode));
         
         const existingItem = inventoryItems.find(item => item.productId === product.id);
@@ -382,7 +379,6 @@ async function addInventoryItem() {
 
         renderInventoryTable();
         
-        // Очищаем поля
         document.getElementById('barcodeInput').value = '';
         document.getElementById('actualCount').value = '';
         document.getElementById('barcodeInput').focus();
@@ -409,33 +405,6 @@ function renderInventoryTable() {
             </tr>
         `;
     }).join('');
-}
-
-// ============ Helpers ============
-
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 20px;
-        background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
-        color: white;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 2000;
-        animation: slideIn 0.3s ease;
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => notification.remove(), 300);
-    }, 3000);
 }
 
 // Глобальные функции
