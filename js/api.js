@@ -2,8 +2,14 @@
  * API клиент для работы с бэкендом
  */
 class ApiClient {
-    constructor(baseURL = '') {
-        this.baseURL = baseURL || window.location.origin;
+    constructor() {
+        // Бэкенд на HTTPS
+        this.baseURL = 'https://91.209.135.123';
+        
+        // Для локальной разработки можно раскомментировать:
+        // if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        //     this.baseURL = 'https://91.209.135.123';
+        // }
     }
 
     /**
@@ -11,11 +17,16 @@ class ApiClient {
      */
     getHeaders() {
         const token = authService.getToken();
-        return {
-            'Authorization': `Bearer ${token}`,
+        const headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         };
+        
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        return headers;
     }
 
     /**
@@ -28,12 +39,16 @@ class ApiClient {
                 authService.redirectToLogin();
                 throw new Error('Сессия истекла');
             }
+            if (response.status === 403) {
+                throw new Error('Доступ запрещен');
+            }
             if (response.status === 404) {
                 throw new Error('Ресурс не найден');
             }
             if (response.status === 409) {
                 throw new Error('Конфликт данных');
             }
+            
             const error = await response.text();
             throw new Error(error || 'Ошибка запроса');
         }
@@ -161,79 +176,6 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(contractData)
-        });
-        return this.handleResponse(response);
-    }
-
-    // ============ Shipments ============
-    async getShipments() {
-        const response = await fetch(`${this.baseURL}/shipments`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async getShipment(id) {
-        const response = await fetch(`${this.baseURL}/shipments/${id}`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async createShipment(shipmentData) {
-        const response = await fetch(`${this.baseURL}/shipments/create`, {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify(shipmentData)
-        });
-        return this.handleResponse(response);
-    }
-
-    async shipShipment(id) {
-        const response = await fetch(`${this.baseURL}/shipments/${id}/ship`, {
-            method: 'POST',
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    // ============ Receipt Orders ============
-    async getReceiptOrders() {
-        const response = await fetch(`${this.baseURL}/receiptorders`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async getReceiptOrder(id) {
-        const response = await fetch(`${this.baseURL}/receiptorders/${id}`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async createReceiptOrder(orderData) {
-        const response = await fetch(`${this.baseURL}/receiptorders/create`, {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify(orderData)
-        });
-        return this.handleResponse(response);
-    }
-
-    // ============ Delivery Schedule ============
-    async getDeliverySchedule() {
-        const response = await fetch(`${this.baseURL}/deliveryschedule`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async addDeliveryScheduleEntry(entryData) {
-        const response = await fetch(`${this.baseURL}/deliveryschedule/add`, {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify(entryData)
         });
         return this.handleResponse(response);
     }
