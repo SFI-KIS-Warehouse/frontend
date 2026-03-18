@@ -3,7 +3,6 @@
  */
 class ApiClient {
     constructor() {
-        //HTTP 
         this.baseURL = 'http://91.209.135.123';
         this.timeout = 30000;
     }
@@ -82,7 +81,7 @@ class ApiClient {
     // ============ User ============
     async login(login, password) {
         const response = await this.fetchWithTimeout(
-            `${this.baseURL}/user/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
+            `${this.baseURL}/api/user/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
             {
                 headers: {
                     'Accept': 'text/plain',
@@ -98,21 +97,21 @@ class ApiClient {
 
     // ============ Providers ============
     async getProviders() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/providers`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getProvider(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/providers/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async addProvider(providerData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/providers/add`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers/add`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(providerData)
@@ -122,21 +121,21 @@ class ApiClient {
 
     // ============ Units ============
     async getUnits() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/units`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/units`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getUnit(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/units/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/units/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async addUnit(name) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/units/add?name=${encodeURIComponent(name)}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/units/add?name=${encodeURIComponent(name)}`, {
             method: 'POST',
             headers: this.getHeaders()
         });
@@ -145,21 +144,21 @@ class ApiClient {
 
     // ============ Products ============
     async getProducts() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/products`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getProduct(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/products/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async addProduct(productData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/products/add`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products/add`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(productData)
@@ -169,21 +168,21 @@ class ApiClient {
 
     // ============ Contracts ============
     async getContracts() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/contracts`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/contracts`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getContract(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/contracts/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/contracts/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async changeContractStatus(id, code) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/contracts/${id}/changeStatus?code=${code}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/contracts/${id}/changeStatus?code=${code}`, {
             method: 'GET',
             headers: this.getHeaders()
         });
@@ -191,7 +190,7 @@ class ApiClient {
     }
 
     async addContract(contractData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/contracts/add`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/contracts/add`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(contractData)
@@ -201,21 +200,21 @@ class ApiClient {
 
     // ============ Shipments ============
     async getShipments() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/shipments`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getShipment(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/shipments/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async createShipment(shipmentData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/shipments/create`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/create`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(shipmentData)
@@ -224,7 +223,7 @@ class ApiClient {
     }
 
     async shipShipment(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/shipments/${id}/ship`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
             method: 'POST',
             headers: this.getHeaders()
         });
@@ -233,21 +232,21 @@ class ApiClient {
 
     // ============ Receipt Orders ============
     async getReceiptOrders() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/receiptorders`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receiptorders`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getReceiptOrder(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/receiptorders/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receiptorders/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async createReceiptOrder(orderData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/receiptorders/create`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receiptorders/create`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(orderData)
@@ -257,14 +256,21 @@ class ApiClient {
 
     // ============ Delivery Schedule ============
     async getDeliverySchedule() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/deliveryschedule`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliveryschedule`, {
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async getDeliveryScheduleEntry(id) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliveryschedule/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async addDeliveryScheduleEntry(entryData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/deliveryschedule/add`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliveryschedule/addEntry`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(entryData)
