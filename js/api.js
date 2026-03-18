@@ -3,9 +3,9 @@
  */
 class ApiClient {
     constructor() {
-        // Бэкенд на HTTPS
-        this.baseURL = CONFIG.API_URL;
-        this.timeout = CONFIG.REQUEST_TIMEOUT;
+        //HTTP 
+        this.baseURL = 'http://91.209.135.123';
+        this.timeout = 30000;
     }
 
     /**
