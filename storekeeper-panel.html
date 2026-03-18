@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Панель кладовщика - Aboba Warehouse</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/dashboard.css">
@@ -28,7 +26,6 @@
             <button class="tab-btn" data-tab="inventory">Инвентаризация</button>
         </div>
 
-        <!-- Вкладка Отгрузки -->
         <div id="shipmentsTab" class="tab-content active">
             <div class="tab-header">
                 <h2>Управление отгрузками</h2>
@@ -54,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Вкладка Поступления -->
         <div id="receiptsTab" class="tab-content">
             <div class="tab-header">
                 <h2>Приходные ордера</h2>
@@ -79,7 +75,6 @@
             </div>
         </div>
 
-        <!-- Вкладка График поставок -->
         <div id="scheduleTab" class="tab-content">
             <div class="tab-header">
                 <h2>График поставок</h2>
@@ -105,7 +100,6 @@
             </div>
         </div>
 
-        <!-- Вкладка Инвентаризация -->
         <div id="inventoryTab" class="tab-content">
             <div class="tab-header">
                 <h2>Инвентаризация</h2>
@@ -134,8 +128,7 @@
                             <th>Расхождение</th>
                         </tr>
                     </thead>
-                    <tbody id="inventoryTableBody">
-                    </tbody>
+                    <tbody id="inventoryTableBody"></tbody>
                 </table>
             </div>
         </div>
