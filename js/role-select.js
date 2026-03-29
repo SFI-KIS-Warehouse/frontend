@@ -1,14 +1,13 @@
 /**
  * Скрипт для страницы выбора роли
  */
-
 document.addEventListener('DOMContentLoaded', () => {
     // Проверяем авторизацию
     if (!authService.isAuthenticated()) {
         authService.redirectToLogin();
         return;
     }
-
+    
     // Если роль уже выбрана, перенаправляем
     const existingRole = authService.getUserRole();
     if (existingRole) {
@@ -18,17 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const managerCard = document.getElementById('managerCard');
     const operatorCard = document.getElementById('operatorCard');
-    const storekeeperCard = document.getElementById('storekeeperCard');
     const continueBtn = document.getElementById('continueBtn');
     const rememberCheckbox = document.getElementById('rememberRole');
-    
+
     let selectedRole = null;
 
     /**
      * Сброс выделения всех карточек
      */
     function resetSelection() {
-        [managerCard, operatorCard, storekeeperCard].forEach(card => {
+        [managerCard, operatorCard].forEach(card => {
             if (card) card.classList.remove('selected');
         });
     }
@@ -41,8 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const cardMap = {
             'manager': managerCard,
-            'operator': operatorCard,
-            'storekeeper': storekeeperCard
+            'operator': operatorCard
         };
         
         const card = cardMap[role];
@@ -74,16 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (storekeeperCard) {
-        storekeeperCard.addEventListener('click', () => selectRole('storekeeper'));
-        storekeeperCard.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                selectRole('storekeeper');
-            }
-        });
-    }
-
     // Обработка продолжения
     continueBtn.addEventListener('click', () => {
         if (selectedRole) {
@@ -94,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Делаем карточки фокусируемыми для доступности
-    [managerCard, operatorCard, storekeeperCard].forEach(card => {
+    [managerCard, operatorCard].forEach(card => {
         if (card) card.setAttribute('tabindex', '0');
     });
 });
