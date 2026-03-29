@@ -13,7 +13,7 @@ class ApiClient {
     async fetchWithTimeout(url, options = {}) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
+        
         try {
             const response = await fetch(url, {
                 ...options,
@@ -39,11 +39,9 @@ class ApiClient {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         };
-        
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }
-        
         return headers;
     }
 
@@ -66,7 +64,6 @@ class ApiClient {
             if (response.status === 409) {
                 throw new Error('Конфликт данных');
             }
-            
             const error = await response.text();
             throw new Error(error || 'Ошибка запроса');
         }
@@ -88,7 +85,6 @@ class ApiClient {
                 }
             }
         );
-        
         if (!response.ok) {
             throw new Error('Ошибка авторизации');
         }
@@ -214,7 +210,7 @@ class ApiClient {
     }
 
     async createShipment(shipmentData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/create`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/add`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(shipmentData)
@@ -224,29 +220,29 @@ class ApiClient {
 
     async shipShipment(id) {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
-            method: 'POST',
+            method: 'GET',
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
-    // ============ Receipt Orders ============
+    // ============ Receipt Orders (ИСПРАВЛЕНО: receipts вместо receiptorders) ============
     async getReceiptOrders() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receiptorders`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receipts`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getReceiptOrder(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receiptorders/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receipts/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async createReceiptOrder(orderData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receiptorders/create`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/receipts/add`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(orderData)
@@ -254,23 +250,23 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ============ Delivery Schedule ============
+    // ============ Delivery Schedule (ИСПРАВЛЕНО: camelCase) ============
     async getDeliverySchedule() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliveryschedule`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async getDeliveryScheduleEntry(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliveryschedule/${id}`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/${id}`, {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
 
     async addDeliveryScheduleEntry(entryData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliveryschedule/addEntry`, {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/addEntry`, {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(entryData)
