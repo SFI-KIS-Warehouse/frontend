@@ -29,7 +29,7 @@ class Modal {
                 </div>
             </div>
         `;
-
+        
         const container = document.getElementById('modalContainer');
         container.innerHTML = modalHtml;
 
@@ -43,7 +43,6 @@ class Modal {
             if (e.target === overlay) this.hide();
         };
 
-        // Закрытие по Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 this.hide();
@@ -58,7 +57,7 @@ class Modal {
 
     addModalStyles() {
         if (document.getElementById('modalStyles')) return;
-
+        
         const styles = `
             <style id="modalStyles">
                 .modal-overlay {
@@ -73,7 +72,6 @@ class Modal {
                     justify-content: center;
                     z-index: 1000;
                 }
-
                 .modal-content {
                     background: white;
                     border-radius: 10px;
@@ -83,7 +81,6 @@ class Modal {
                     overflow-y: auto;
                     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
                 }
-
                 .modal-header {
                     padding: 20px;
                     border-bottom: 1px solid #eee;
@@ -91,12 +88,10 @@ class Modal {
                     justify-content: space-between;
                     align-items: center;
                 }
-
                 .modal-header h3 {
                     margin: 0;
                     color: #333;
                 }
-
                 .modal-close {
                     background: none;
                     border: none;
@@ -104,26 +99,21 @@ class Modal {
                     cursor: pointer;
                     color: #999;
                 }
-
                 .modal-close:hover {
                     color: #333;
                 }
-
                 .modal-body {
                     padding: 20px;
                 }
-
                 .form-group {
                     margin-bottom: 15px;
                 }
-
                 .form-group label {
                     display: block;
                     margin-bottom: 5px;
                     color: #555;
                     font-weight: 500;
                 }
-
                 .form-group input,
                 .form-group select,
                 .form-group textarea {
@@ -133,26 +123,22 @@ class Modal {
                     border-radius: 5px;
                     font-size: 14px;
                 }
-
                 .form-group input:focus,
                 .form-group select:focus {
                     outline: none;
                     border-color: #667eea;
                 }
-
                 .form-row {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     gap: 15px;
                 }
-
                 .form-actions {
                     display: flex;
                     justify-content: flex-end;
                     gap: 10px;
                     margin-top: 20px;
                 }
-
                 .btn {
                     padding: 10px 20px;
                     border: none;
@@ -161,36 +147,29 @@ class Modal {
                     font-size: 14px;
                     font-weight: 500;
                 }
-
                 .btn-primary {
                     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
                 }
-
                 .btn-secondary {
                     background: #6c757d;
                     color: white;
                 }
-
                 .btn-success {
                     background: #28a745;
                     color: white;
                 }
-
                 .btn-danger {
                     background: #dc3545;
                     color: white;
                 }
-
                 .btn:hover {
                     opacity: 0.9;
                 }
-
                 .btn:disabled {
                     opacity: 0.5;
                     cursor: not-allowed;
                 }
-
                 .status-badge {
                     display: inline-block;
                     padding: 6px 12px;
@@ -198,46 +177,23 @@ class Modal {
                     font-size: 12px;
                     font-weight: 600;
                 }
-
-                .status-created {
-                    background: #fff3cd;
-                    color: #856404;
-                }
-
-                .status-approved {
-                    background: #d4edda;
-                    color: #155724;
-                }
-
-                .status-signed {
-                    background: #cce5ff;
-                    color: #004085;
-                }
-
-                .status-cancelled {
-                    background: #f8d7da;
-                    color: #721c24;
-                }
-
-                .status-shipped {
-                    background: #d4edda;
-                    color: #155724;
-                }
-
+                .status-created { background: #fff3cd; color: #856404; }
+                .status-approved { background: #d4edda; color: #155724; }
+                .status-signed { background: #cce5ff; color: #004085; }
+                .status-cancelled { background: #f8d7da; color: #721c24; }
+                .status-shipped { background: #d4edda; color: #155724; }
                 .product-item {
                     border: 1px solid #eee;
                     padding: 15px;
                     border-radius: 5px;
                     margin-bottom: 10px;
                 }
-
                 .product-item-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 10px;
                 }
-
                 .remove-btn {
                     background: none;
                     border: none;
@@ -245,7 +201,6 @@ class Modal {
                     font-size: 18px;
                     cursor: pointer;
                 }
-
                 .add-product-btn {
                     background: #28a745;
                     color: white;
@@ -256,50 +211,41 @@ class Modal {
                     width: 100%;
                     margin-top: 10px;
                 }
-
-                .add-product-btn:hover {
-                    opacity: 0.9;
-                }
+                .add-product-btn:hover { opacity: 0.9; }
             </style>
         `;
+        
         document.head.insertAdjacentHTML('beforeend', styles);
     }
 }
 
-// Глобальный экземпляр модального окна
 const modal = new Modal();
 
-/**
- * Функция для показа уведомлений
- */
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
     notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 20px;
-        background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'};
-        color: white;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        z-index: 2000;
+        position: fixed; 
+        top: 20px; 
+        right: 20px; 
+        padding: 15px 20px; 
+        background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'}; 
+        color: white; 
+        border-radius: 5px; 
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+        z-index: 2000; 
         animation: slideIn 0.3s ease;
     `;
-
+    
     document.body.appendChild(notification);
-
+    
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
     }, CONFIG.NOTIFICATION_DURATION);
 }
 
-/**
- * Debounce функция для поиска
- */
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -311,3 +257,20 @@ function debounce(func, wait) {
         timeout = setTimeout(later, wait);
     };
 }
+
+/**
+ * 🔙 Инициализация клика по navbar-brand для возврата к выбору ролей
+ */
+function initNavbarBrandClick() {
+    const navbarBrand = document.querySelector('.navbar-brand');
+    if (navbarBrand) {
+        navbarBrand.addEventListener('click', () => {
+            authService.resetRole();
+            authService.redirectToRoleSelect();
+        });
+        navbarBrand.title = 'Нажмите для выбора роли';
+        navbarBrand.style.cursor = 'pointer';
+    }
+}
+
+window.initNavbarBrandClick = initNavbarBrandClick;
