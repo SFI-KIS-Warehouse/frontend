@@ -26,32 +26,31 @@
             <button class="tab-btn" data-tab="contracts">Договоры</button>
         </div>
 
-        <div id="providersTab" class="tab-content active">
-            <div class="tab-header">
-                <h2>Управление поставщиками</h2>
-                <button class="btn btn-primary" onclick="showAddProviderModal()">
-                    ➕ Добавить поставщика
-                </button>
-            </div>
-            <div class="table-container">
-                <table class="data-table" id="providersTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Наименование</th>
-                            <th>ИНН</th>
-                            <th>БИК</th>
-                            <th>Расчетный счет</th>
-                            <th>Директор</th>
-                            <th>Бухгалтер</th>
-                        </tr>
-                    </thead>
-                    <tbody id="providersTableBody">
-                        <tr><td colspan="7" class="loading">Загрузка...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <!-- Вкладка Поставщики -->
+<div id="providersTab" class="tab-content active">
+    <div class="tab-header">
+        <h2>Управление поставщиками</h2>
+        <button class="btn btn-primary" onclick="showAddProviderModal()">➕ Добавить поставщика</button>
+    </div>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Наименование</th>
+                    <th>ИНН</th>
+                    <th>БИК</th>
+                    <th>Расчетный счет</th>
+                    <th>Директор</th>
+                    <th>Бухгалтер</th>
+                </tr>
+            </thead>
+            <tbody id="providersTableBody">
+                <tr><td colspan="7" class="loading">Загрузка...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 
         <div id="productsTab" class="tab-content">
             <div class="tab-header">
