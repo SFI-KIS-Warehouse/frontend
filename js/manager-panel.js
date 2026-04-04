@@ -1,7 +1,6 @@
 /**
  * Скрипт для панели менеджера
  */
-
 let providers = [];
 let products = [];
 let units = [];
@@ -12,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authService.redirectToLogin();
         return;
     }
-
+    
     const userRole = authService.getUserRole();
     if (userRole !== 'manager') {
         authService.redirectToRoleSelect();
@@ -22,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setupTabs();
     updateUserInfo();
     loadAllData();
+    
+    initNavbarBrandClick();
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
         authService.logout();
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function setupTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
-
+    
     tabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             const tabId = btn.dataset.tab;
@@ -68,14 +69,19 @@ async function loadAllData() {
 }
 
 // ============ Providers ============
-
 async function loadProviders() {
     try {
         providers = await api.getProviders();
+        console.log('📦 Providers:', providers); // ✅ Для отладки
+        if (providers.length > 0) {
+            console.log('🔍 Первый поставщик:', providers[0]);
+            console.log('🔍 ИНН первого поставщика:', providers[0].itn);
+        }
         renderProvidersTable();
     } catch (error) {
         document.getElementById('providersTableBody').innerHTML = 
             '<tr><td colspan="7" class="error">Ошибка загрузки</td></tr>';
+        console.error('Load providers error:', error);
     }
 }
 
@@ -87,17 +93,47 @@ function renderProvidersTable() {
         return;
     }
 
-    tbody.innerHTML = providers.map(provider => `
-        <tr>
-            <td>${provider.id}</td>
-            <td>${provider.name}</td>
-            <td>${provider.itn || provider.ITN || '-'}</td>
-            <td>${provider.bic || provider.BIC || '-'}</td>
-            <td>${provider.settlementAccount || '-'}</td>
-            <td>${provider.directorFullName || '-'}</td>
-            <td>${provider.accountantFullName || '-'}</td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = providers.map(provider => {
+        // ✅ ИСПРАВЛЕНО: Используем ?? вместо || для обработки 0
+        const inn = (provider.itn ?? provider.ITN ?? provider.inn ?? provider.Inn);
+        const innDisplay = (inn !== null && inn !== undefined) ? String(inn) : '-';
+        
+        const bic = (provider.bic ?? provider.BIC ?? provider.Bic);
+        const bicDisplay = (bic !== null && bic !== undefined) ? String(bic) : '-';
+        
+        const account = (provider.settlementAccount ?? provider.SettlementAccount ?? provider.account);
+        const accountDisplay = (account !== null && account !== undefined) ? String(account) : '-';
+        
+        return `
+            <tr>
+                <td>${provider.id ?? '-'}</td>
+                <td>${provider.name ?? '-'}</td>
+                <td>${innDisplay}</td>
+                <td>${bicDisplay}</td>
+                <td>${accountDisplay}</td>
+                <td>${provider.directorFullName ?? provider.DirectorFullName ?? '-'}</td>
+                <td>${provider.accountantFullName ?? provider.AccountantFullName ?? '-'}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// ✅ Проверка ИНН (10 или 12 цифр)
+function validateINN(value) {
+    const innRegex = /^\d{10}$|^\d{12}$/;
+    if (!innRegex.test(value)) {
+        return 'ИНН должен содержать 10 или 12 цифр';
+    }
+    return '';
+}
+
+// ✅ Проверка БИК (9 цифр)
+function validateBIC(value) {
+    const bicRegex = /^\d{9}$/;
+    if (!bicRegex.test(value)) {
+        return 'БИК должен содержать ровно 9 цифр';
+    }
+    return '';
 }
 
 function showAddProviderModal() {
@@ -110,16 +146,18 @@ function showAddProviderModal() {
                     <input type="text" id="providerName" required>
                 </div>
                 <div class="form-group">
-                    <label>ИНН *</label>
-                    <input type="number" id="providerItn" required>
+                    <label>ИНН * (10 или 12 цифр)</label>
+                    <input type="text" id="providerItn" required maxlength="12" placeholder="10 или 12 цифр">
+                    <small id="innError" style="color: #dc3545; display: none; font-size: 12px; margin-top: 5px;"></small>
                 </div>
                 <div class="form-group">
-                    <label>БИК *</label>
-                    <input type="number" id="providerBic" required>
+                    <label>БИК * (9 цифр)</label>
+                    <input type="text" id="providerBic" required maxlength="9" placeholder="9 цифр">
+                    <small id="bicError" style="color: #dc3545; display: none; font-size: 12px; margin-top: 5px;"></small>
                 </div>
                 <div class="form-group">
                     <label>Расчетный счет *</label>
-                    <input type="number" id="providerAccount" required>
+                    <input type="text" id="providerAccount" required>
                 </div>
                 <div class="form-group">
                     <label>ФИО Директора *</label>
@@ -136,17 +174,92 @@ function showAddProviderModal() {
             </form>
         `
     };
-
+    
     modal.show(modalContent);
+
+    // Валидация ИНН
+    const innInput = document.getElementById('providerItn');
+    const innError = document.getElementById('innError');
+    if (innInput) {
+        innInput.addEventListener('input', () => {
+            innInput.value = innInput.value.replace(/\D/g, '');
+        });
+        innInput.addEventListener('blur', () => {
+            const value = innInput.value;
+            if (value.length > 0) {
+                const error = validateINN(value);
+                if (error) {
+                    innError.textContent = error;
+                    innError.style.display = 'block';
+                    innInput.classList.add('error');
+                } else {
+                    innError.style.display = 'none';
+                    innInput.classList.remove('error');
+                }
+            }
+        });
+        innInput.addEventListener('focus', () => {
+            innError.style.display = 'none';
+            innInput.classList.remove('error');
+        });
+    }
+
+    // Валидация БИК
+    const bicInput = document.getElementById('providerBic');
+    const bicError = document.getElementById('bicError');
+    if (bicInput) {
+        bicInput.addEventListener('input', () => {
+            bicInput.value = bicInput.value.replace(/\D/g, '');
+        });
+        bicInput.addEventListener('blur', () => {
+            const value = bicInput.value;
+            if (value.length > 0) {
+                const error = validateBIC(value);
+                if (error) {
+                    bicError.textContent = error;
+                    bicError.style.display = 'block';
+                    bicInput.classList.add('error');
+                } else {
+                    bicError.style.display = 'none';
+                    bicInput.classList.remove('error');
+                }
+            }
+        });
+        bicInput.addEventListener('focus', () => {
+            bicError.style.display = 'none';
+            bicInput.classList.remove('error');
+        });
+    }
 
     document.getElementById('addProviderForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
+        const innValue = document.getElementById('providerItn').value;
+        const bicValue = document.getElementById('providerBic').value;
+        
+        const innErr = validateINN(innValue);
+        const bicErr = validateBIC(bicValue);
+        
+        if (innErr) {
+            innError.textContent = innErr;
+            innError.style.display = 'block';
+            showNotification(innErr, 'error');
+            return;
+        }
+        
+        if (bicErr) {
+            bicError.textContent = bicErr;
+            bicError.style.display = 'block';
+            showNotification(bicErr, 'error');
+            return;
+        }
+        
+        // ✅ ИСПРАВЛЕНО: 'itn' вместо 'int'
         const providerData = {
             name: document.getElementById('providerName').value,
-            int: parseInt(document.getElementById('providerItn').value),
-            bic: parseInt(document.getElementById('providerBic').value),
-            settlementAccount: parseInt(document.getElementById('providerAccount').value),
+            itn: parseInt(innValue, 10),
+            bic: parseInt(bicValue, 10),
+            settlementAccount: parseInt(document.getElementById('providerAccount').value, 10),
             directorFullName: document.getElementById('providerDirector').value,
             accountantFullName: document.getElementById('providerAccountant').value
         };
@@ -161,13 +274,13 @@ function showAddProviderModal() {
             await loadProviders();
             showNotification(`Поставщик добавлен с ID: ${id}`, 'success');
         } catch (error) {
-            showNotification(error.message, 'error');
+            console.error('Add provider error:', error);
+            showNotification(error.message || 'Ошибка при добавлении поставщика', 'error');
         }
     });
 }
 
 // ============ Units ============
-
 async function loadUnits() {
     try {
         units = await api.getUnits();
@@ -180,7 +293,6 @@ async function loadUnits() {
 
 function renderUnitsTable() {
     const tbody = document.getElementById('unitsTableBody');
-    
     if (!units.length) {
         tbody.innerHTML = '<tr><td colspan="2" class="loading">Нет данных</td></tr>';
         return;
@@ -210,7 +322,7 @@ function showAddUnitModal() {
             </form>
         `
     };
-
+    
     modal.show(modalContent);
 
     document.getElementById('addUnitForm').addEventListener('submit', async (e) => {
@@ -238,7 +350,6 @@ function showAddUnitModal() {
 }
 
 // ============ Products ============
-
 async function loadProducts() {
     try {
         products = await api.getProducts();
@@ -251,7 +362,6 @@ async function loadProducts() {
 
 function renderProductsTable() {
     const tbody = document.getElementById('productsTableBody');
-    
     if (!products.length) {
         tbody.innerHTML = '<tr><td colspan="4" class="loading">Нет данных</td></tr>';
         return;
@@ -262,17 +372,19 @@ function renderProductsTable() {
             <td>${product.id}</td>
             <td>${product.name}</td>
             <td>${product.unit?.name || '-'}</td>
-            <td>${product.criticalBalance || 0}</td>
+            <td>${product.criticalBalance ?? 0}</td>
         </tr>
     `).join('');
 }
 
 function showAddProductModal() {
-    if (!units.length) {
+    if (!units || units.length === 0) {
         loadUnits().then(() => showAddProductModal());
         return;
     }
-
+    
+    const unitOptions = units.map(u => `<option value="${u.id}">${u.name}</option>`).join('');
+    
     const modalContent = {
         title: 'Добавление товара',
         body: `
@@ -285,7 +397,7 @@ function showAddProductModal() {
                     <label>Единица измерения *</label>
                     <select id="productUnit" required>
                         <option value="">Выберите единицу измерения</option>
-                        ${units.map(u => `<option value="${u.id}">${u.name}</option>`).join('')}
+                        ${unitOptions}
                     </select>
                 </div>
                 <div class="form-group">
@@ -302,32 +414,34 @@ function showAddProductModal() {
 
     modal.show(modalContent);
 
-    document.getElementById('addProductForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const productData = {
-            name: document.getElementById('productName').value,
-            unit: parseInt(document.getElementById('productUnit').value),
-            criticalBalance: parseInt(document.getElementById('productCriticalBalance').value)
-        };
+    const form = document.getElementById('addProductForm');
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const productData = {
+                name: document.getElementById('productName').value,
+                unit: parseInt(document.getElementById('productUnit').value),
+                criticalBalance: parseInt(document.getElementById('productCriticalBalance').value)
+            };
 
-        try {
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Сохранение...';
+            try {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Сохранение...';
 
-            const id = await api.addProduct(productData);
-            modal.hide();
-            await loadProducts();
-            showNotification(`Товар добавлен с ID: ${id}`, 'success');
-        } catch (error) {
-            showNotification(error.message, 'error');
-        }
-    });
+                const id = await api.addProduct(productData);
+                modal.hide();
+                await loadProducts();
+                showNotification(`Товар добавлен с ID: ${id}`, 'success');
+            } catch (error) {
+                showNotification(error.message, 'error');
+            }
+        });
+    }
 }
 
 // ============ Contracts ============
-
 async function loadContracts() {
     try {
         contracts = await api.getContracts();
@@ -340,7 +454,6 @@ async function loadContracts() {
 
 function renderContractsTable() {
     const tbody = document.getElementById('contractsTableBody');
-    
     if (!contracts.length) {
         tbody.innerHTML = '<tr><td colspan="5" class="loading">Нет данных</td></tr>';
         return;
@@ -377,13 +490,13 @@ async function viewContract(id) {
 function showContractModal(contract) {
     const productRows = contract.productInfo?.map(info => `
         <tr>
-            <td>${info.product || 'ID: ' + info.product}</td>
+            <td>${info.product?.name || 'ID: ' + info.product}</td>
             <td>${info.count}</td>
             <td>${info.price}</td>
             <td>${(info.count * info.price).toFixed(2)}</td>
         </tr>
     `).join('') || '';
-
+    
     const total = contract.productInfo?.reduce((sum, info) => 
         sum + (info.count * info.price), 0
     ).toFixed(2) || 0;
@@ -445,7 +558,7 @@ function showContractModal(contract) {
 async function changeContractStatus(id) {
     const select = document.getElementById('changeStatusSelect');
     const newStatus = parseInt(select.value);
-
+    
     try {
         await api.changeContractStatus(id, newStatus);
         modal.hide();
@@ -461,6 +574,8 @@ function showAddContractModal() {
         providers.length ? Promise.resolve() : loadProviders(),
         products.length ? Promise.resolve() : loadProducts()
     ]).then(() => {
+        const providerOptions = providers.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        
         const modalContent = {
             title: 'Создание договора',
             body: `
@@ -469,10 +584,10 @@ function showAddContractModal() {
                         <label>Поставщик *</label>
                         <select id="contractProvider" required>
                             <option value="">Выберите поставщика</option>
-                            ${providers.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+                            ${providerOptions}
                         </select>
                     </div>
-
+                    
                     <div id="productsContainer">
                         <!-- Товары будут добавляться сюда -->
                     </div>
@@ -498,8 +613,10 @@ function showAddContractModal() {
 function addProductToContract() {
     const container = document.getElementById('productsContainer');
     if (!container) return;
-
+    
     const productId = `product_${window.productCounter++}`;
+
+    const productOptions = products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
 
     const productHtml = `
         <div class="product-item" id="${productId}">
@@ -511,7 +628,7 @@ function addProductToContract() {
                 <label>Товар *</label>
                 <select class="product-select" required>
                     <option value="">Выберите товар</option>
-                    ${products.map(p => `<option value="${p.id}">${p.name}</option>`).join('')}
+                    ${productOptions}
                 </select>
             </div>
             <div class="form-row">
@@ -534,11 +651,10 @@ function removeProductFromContract(id) {
     document.getElementById(id)?.remove();
 }
 
-// Обработка создания договора
 document.addEventListener('submit', async (e) => {
     if (e.target.id === 'addContractForm') {
         e.preventDefault();
-
+        
         const providerId = parseInt(document.getElementById('contractProvider').value);
         const productItems = document.querySelectorAll('.product-item');
 
