@@ -7,9 +7,6 @@ class ApiClient {
         this.timeout = 30000;
     }
 
-    /**
-     * Выполнить fetch с таймаутом
-     */
     async fetchWithTimeout(url, options = {}) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
@@ -30,9 +27,6 @@ class ApiClient {
         }
     }
 
-    /**
-     * Получить заголовки с токеном авторизации
-     */
     getHeaders() {
         const token = authService.getToken();
         const headers = {
@@ -45,9 +39,6 @@ class ApiClient {
         return headers;
     }
 
-    /**
-     * Обработка ответа от сервера
-     */
     async handleResponse(response) {
         if (!response.ok) {
             if (response.status === 401) {
@@ -79,11 +70,7 @@ class ApiClient {
     async login(login, password) {
         const response = await this.fetchWithTimeout(
             `${this.baseURL}/api/user/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
-            {
-                headers: {
-                    'Accept': 'text/plain',
-                }
-            }
+            { headers: { 'Accept': 'text/plain' } }
         );
         if (!response.ok) {
             throw new Error('Ошибка авторизации');
@@ -111,6 +98,15 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(providerData)
+        });
+        return this.handleResponse(response);
+    }
+
+    // ✅ НОВОЕ: Удаление поставщика
+    async deleteProvider(id) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
@@ -158,6 +154,15 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(productData)
+        });
+        return this.handleResponse(response);
+    }
+
+    // ✅ НОВОЕ: Удаление товара
+    async deleteProduct(id) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products/${id}`, {
+            method: 'DELETE',
+            headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
@@ -226,7 +231,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ============ Receipt Orders (ИСПРАВЛЕНО: receipts вместо receiptorders) ============
+    // ============ Receipt Orders ============
     async getReceiptOrders() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/receipts`, {
             headers: this.getHeaders()
@@ -250,7 +255,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ============ Delivery Schedule (ИСПРАВЛЕНО: camelCase) ============
+    // ============ Delivery Schedule ============
     async getDeliverySchedule() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
             headers: this.getHeaders()
@@ -275,5 +280,4 @@ class ApiClient {
     }
 }
 
-// Глобальный экземпляр API клиента
 const api = new ApiClient();
