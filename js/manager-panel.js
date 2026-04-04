@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUserInfo();
     loadAllData();
     
+    initNavbarBrandClick();
+
     document.getElementById('logoutBtn').addEventListener('click', () => {
         authService.logout();
         authService.redirectToLogin();
@@ -71,10 +73,6 @@ async function loadProviders() {
     try {
         providers = await api.getProviders();
         console.log('📦 Providers:', providers);
-        if (providers.length > 0) {
-            console.log('🔍 Первый поставщик:', providers[0]);
-            console.log('🔍 ИНН:', providers[0].itn);
-        }
         renderProvidersTable();
     } catch (error) {
         document.getElementById('providersTableBody').innerHTML = 
@@ -92,15 +90,18 @@ function renderProvidersTable() {
     }
 
     tbody.innerHTML = providers.map(provider => {
-        // ✅ ИСПРАВЛЕНО: Проверяем на null/undefined, а не на falsy
-        const inn = (provider.itn !== null && provider.itn !== undefined) ? provider.itn : 
-                    (provider.ITN !== null && provider.ITN !== undefined) ? provider.ITN : '-';
+        // ✅ Исправлено: Проверяем на null/undefined, а не на falsy
+        const inn = (provider.itn !== null && provider.itn !== undefined && provider.itn !== '') 
+            ? String(provider.itn) 
+            : '-';
         
-        const bic = (provider.bic !== null && provider.bic !== undefined) ? provider.bic : 
-                    (provider.BIC !== null && provider.BIC !== undefined) ? provider.BIC : '-';
+        const bic = (provider.bic !== null && provider.bic !== undefined && provider.bic !== '') 
+            ? String(provider.bic) 
+            : '-';
         
-        const account = (provider.settlementAccount !== null && provider.settlementAccount !== undefined) ? 
-                        provider.settlementAccount : '-';
+        const account = (provider.settlementAccount !== null && provider.settlementAccount !== undefined) 
+            ? String(provider.settlementAccount) 
+            : '-';
         
         return `
             <tr>
@@ -126,12 +127,12 @@ function showAddProviderModal() {
                     <input type="text" id="providerName" required>
                 </div>
                 <div class="form-group">
-                    <label>ИНН * (10 или 12 цифр)</label>
+                    <label>ИНН *</label>
                     <input type="text" id="providerItn" required maxlength="12" placeholder="10 или 12 цифр">
                     <small id="innError" style="color: #dc3545; display: none; font-size: 12px; margin-top: 5px;"></small>
                 </div>
                 <div class="form-group">
-                    <label>БИК * (9 цифр)</label>
+                    <label>БИК *</label>
                     <input type="text" id="providerBic" required maxlength="9" placeholder="9 цифр">
                     <small id="bicError" style="color: #dc3545; display: none; font-size: 12px; margin-top: 5px;"></small>
                 </div>
@@ -157,57 +158,19 @@ function showAddProviderModal() {
     
     modal.show(modalContent);
 
-    // Валидация ИНН
+    // Валидация ИНН - только цифры
     const innInput = document.getElementById('providerItn');
-    const innError = document.getElementById('innError');
     if (innInput) {
         innInput.addEventListener('input', () => {
             innInput.value = innInput.value.replace(/\D/g, '');
         });
-        innInput.addEventListener('blur', () => {
-            const value = innInput.value;
-            if (value.length > 0) {
-                const regex = /^\d{10}$|^\d{12}$/;
-                if (!regex.test(value)) {
-                    innError.textContent = 'ИНН должен содержать 10 или 12 цифр';
-                    innError.style.display = 'block';
-                    innInput.classList.add('error');
-                } else {
-                    innError.style.display = 'none';
-                    innInput.classList.remove('error');
-                }
-            }
-        });
-        innInput.addEventListener('focus', () => {
-            innError.style.display = 'none';
-            innInput.classList.remove('error');
-        });
     }
 
-    // Валидация БИК
+    // Валидация БИК - только цифры
     const bicInput = document.getElementById('providerBic');
-    const bicError = document.getElementById('bicError');
     if (bicInput) {
         bicInput.addEventListener('input', () => {
             bicInput.value = bicInput.value.replace(/\D/g, '');
-        });
-        bicInput.addEventListener('blur', () => {
-            const value = bicInput.value;
-            if (value.length > 0) {
-                const regex = /^\d{9}$/;
-                if (!regex.test(value)) {
-                    bicError.textContent = 'БИК должен содержать ровно 9 цифр';
-                    bicError.style.display = 'block';
-                    bicInput.classList.add('error');
-                } else {
-                    bicError.style.display = 'none';
-                    bicInput.classList.remove('error');
-                }
-            }
-        });
-        bicInput.addEventListener('focus', () => {
-            bicError.style.display = 'none';
-            bicInput.classList.remove('error');
         });
     }
 
@@ -217,20 +180,21 @@ function showAddProviderModal() {
         const innValue = document.getElementById('providerItn').value;
         const bicValue = document.getElementById('providerBic').value;
         
-        // Валидация
-        if (!/^\d{10}$|^\d{12}$/.test(innValue)) {
-            showNotification('ИНН должен содержать 10 или 12 цифр', 'error');
-            return;
-        }
-        if (!/^\d{9}$/.test(bicValue)) {
-            showNotification('БИК должен содержать ровно 9 цифр', 'error');
+        // ✅ Убрана проверка количества цифр
+        if (!innValue || innValue.length === 0) {
+            showNotification('Введите ИНН', 'error');
             return;
         }
         
-        // ✅ ИСПРАВЛЕНО: 'itn' вместо 'int'
+        if (!bicValue || bicValue.length === 0) {
+            showNotification('Введите БИК', 'error');
+            return;
+        }
+        
+        // ✅ Исправлено: 'itn' вместо 'int'
         const providerData = {
             name: document.getElementById('providerName').value,
-            itn: parseInt(innValue, 10),           // ✅ Правильно: itn
+            itn: parseInt(innValue, 10),
             bic: parseInt(bicValue, 10),
             settlementAccount: parseInt(document.getElementById('providerAccount').value, 10),
             directorFullName: document.getElementById('providerDirector').value,
