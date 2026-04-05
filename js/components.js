@@ -52,7 +52,9 @@ class Modal {
 
     hide() {
         const container = document.getElementById('modalContainer');
-        container.innerHTML = '';
+        if (container) {
+            container.innerHTML = '';
+        }
     }
 
     addModalStyles() {
@@ -258,14 +260,13 @@ function debounce(func, wait) {
     };
 }
 
-/**
- * 🔙 Инициализация клика по navbar-brand для возврата к выбору ролей
- */
 function initNavbarBrandClick() {
     const navbarBrand = document.querySelector('.navbar-brand');
     if (navbarBrand) {
         navbarBrand.addEventListener('click', () => {
-            authService.resetRole();
+            if (typeof authService.resetRole === 'function') {
+                authService.resetRole();
+            }
             authService.redirectToRoleSelect();
         });
         navbarBrand.title = 'Нажмите для выбора роли';
@@ -273,4 +274,7 @@ function initNavbarBrandClick() {
     }
 }
 
+window.showNotification = showNotification;
+window.debounce = debounce;
 window.initNavbarBrandClick = initNavbarBrandClick;
+window.modal = modal;
