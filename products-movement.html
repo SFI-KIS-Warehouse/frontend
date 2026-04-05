@@ -4,43 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Товары и движения - Aboba Warehouse</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/products-movement.css">
+    <link rel="stylesheet" href="css/products-movement.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-brand">Aboba Warehouse</div>
         <div class="navbar-menu">
-            <span>📦 Товары и движения</span>
             <span id="userName">Пользователь</span>
-            <button class="logout-button" id="logoutBtn">Выйти</button>
+            <button id="logoutBtn" class="logout-button">🚪 Выйти</button>
         </div>
     </nav>
 
-    <div class="container products-container">
+    <div class="products-container">
         <div class="products-header">
             <div>
-                <h1>Товары и складские движения</h1>
+                <h1>📦 Товары и движения</h1>
                 <p>Управление товарами и операциями на складе</p>
             </div>
             <div class="quick-actions">
-                <button class="quick-action-btn income" onclick="openIncomeModal()">
-                    ➕ Приход товара
-                </button>
-                <button class="quick-action-btn outcome" onclick="openOutcomeModal()">
-                    ➖ Расход товара
-                </button>
-                <button class="quick-action-btn inventory" onclick="startInventory()">
-                    📋 Инвентаризация
-                </button>
+                <button class="quick-action-btn income" onclick="openIncomeModal()">➕ Приход товара</button>
+                <button class="quick-action-btn outcome" onclick="openOutcomeModal()">➖ Расход товара</button>
             </div>
         </div>
 
         <div class="search-section">
-            <input type="text" class="search-input" id="searchInput" 
-                   placeholder="Поиск по названию...">
-            <select class="filter-select" id="filterSelect">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Поиск товаров...">
+            <select id="filterSelect" class="filter-select">
                 <option value="all">Все товары</option>
                 <option value="critical">Критический остаток</option>
                 <option value="in-stock">В наличии</option>
@@ -55,24 +46,22 @@
                         <th>ID</th>
                         <th>Наименование</th>
                         <th>Ед. изм.</th>
-                        <th>Количество</th>
-                        <th>Критический остаток</th>
                         <th>Статус</th>
-                        <th>Действия</th>
                     </tr>
                 </thead>
                 <tbody id="productsTableBody">
-                    <tr><td colspan="7" class="loading">Загрузка...</td></tr>
+                    <tr>
+                        <td colspan="4" class="loading">Загрузка...</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
-
-        <div class="pagination" id="pagination"></div>
     </div>
 
-    <script src="/js/config.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/products-movement.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/products-movement.js"></script>
 </body>
 </html>
