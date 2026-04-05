@@ -23,9 +23,9 @@
             <button class="tab-btn" data-tab="units">⚖️ Единицы</button>
             <button class="tab-btn" data-tab="products">📦 Товары</button>
             <button class="tab-btn" data-tab="contracts">📄 Договоры</button>
+            <button class="tab-btn" data-tab="schedule">📅 График поставок</button>
         </div>
 
-        <!-- Вкладка Поставщики -->
         <div id="providersTab" class="tab-content active">
             <div class="tab-header">
                 <h2>Управление поставщиками</h2>
@@ -51,7 +51,6 @@
             </div>
         </div>
 
-        <!-- Вкладка Единицы -->
         <div id="unitsTab" class="tab-content">
             <div class="tab-header">
                 <h2>Единицы измерения</h2>
@@ -72,7 +71,6 @@
             </div>
         </div>
 
-        <!-- Вкладка Товары -->
         <div id="productsTab" class="tab-content">
             <div class="tab-header">
                 <h2>Товары</h2>
@@ -95,7 +93,6 @@
             </div>
         </div>
 
-        <!-- Вкладка Договоры -->
         <div id="contractsTab" class="tab-content">
             <div class="tab-header">
                 <h2>Договоры</h2>
@@ -114,6 +111,34 @@
                     </thead>
                     <tbody id="contractsTableBody">
                         <tr><td colspan="5" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="scheduleTab" class="tab-content">
+            <div class="tab-header">
+                <h2>📅 График поставок</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="loadDeliverySchedule()">🔄 Обновить</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAllSchedule" onchange="toggleSelectAllSchedule()">
+                            </th>
+                            <th>Дата</th>
+                            <th>Название товара</th>
+                            <th>Количество</th>
+                            <th>Договор</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody">
+                        <tr><td colspan="6" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
