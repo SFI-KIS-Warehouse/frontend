@@ -7,14 +7,9 @@ class AuthService {
         this.USER_ROLE_KEY = 'user_role';
     }
 
-    /**
-     * Авторизация пользователя
-     */
     async login(login, password) {
         try {
             const token = await api.login(login, password);
-            
-            // Пытаемся декодировать токен для получения информации
             let userData = null;
             try {
                 userData = this.decodeToken(token);
@@ -39,9 +34,6 @@ class AuthService {
         }
     }
 
-    /**
-     * Декодирование JWT токена
-     */
     decodeToken(token) {
         try {
             const base64Url = token.split('.')[1];
@@ -54,9 +46,6 @@ class AuthService {
         }
     }
 
-    /**
-     * Сохранить токен
-     */
     saveToken(token, remember = true) {
         if (remember) {
             localStorage.setItem(this.TOKEN_KEY, token);
@@ -65,16 +54,10 @@ class AuthService {
         }
     }
 
-    /**
-     * Получить токен
-     */
     getToken() {
         return localStorage.getItem(this.TOKEN_KEY) || sessionStorage.getItem(this.TOKEN_KEY);
     }
 
-    /**
-     * Удалить токен (выход)
-     */
     logout() {
         localStorage.removeItem(this.TOKEN_KEY);
         sessionStorage.removeItem(this.TOKEN_KEY);
@@ -82,16 +65,10 @@ class AuthService {
         sessionStorage.removeItem(this.USER_ROLE_KEY);
     }
 
-    /**
-     * Проверить, авторизован ли пользователь
-     */
     isAuthenticated() {
         return !!this.getToken();
     }
 
-    /**
-     * Сохранить роль пользователя
-     */
     saveUserRole(role, remember = true) {
         if (remember) {
             localStorage.setItem(this.USER_ROLE_KEY, role);
@@ -100,55 +77,45 @@ class AuthService {
         }
     }
 
-    /**
-     * Получить роль пользователя
-     */
     getUserRole() {
         return localStorage.getItem(this.USER_ROLE_KEY) || sessionStorage.getItem(this.USER_ROLE_KEY);
     }
 
-    /**
-     * Перенаправить на страницу выбора роли
-     */
+    // ✅ НОВЫЙ МЕТОД: Сброс роли для возврата к выбору
+    resetRole() {
+        localStorage.removeItem(this.USER_ROLE_KEY);
+        sessionStorage.removeItem(this.USER_ROLE_KEY);
+        console.log('Role reset successfully');
+    }
+
     redirectToRoleSelect() {
-        window.location.href = '/role-select.html';
+        window.location.href = 'role-select.html';
     }
 
-    /**
-     * Перенаправить на страницу входа
-     */
     redirectToLogin() {
-        window.location.href = '/login.html';
+        window.location.href = 'login.html';
     }
 
-    /**
-     * Перенаправить в соответствующий раздел на основе роли
-     */
     redirectToDashboard() {
         const role = this.getUserRole();
-        
         switch(role) {
             case 'manager':
-                window.location.href = '/manager-panel.html';
-                break;
-            case 'storekeeper':
-                window.location.href = '/storekeeper-panel.html';
+                window.location.href = 'manager-panel.html';
                 break;
             case 'operator':
-                window.location.href = '/products-movement.html';
+                window.location.href = 'products-movement.html';
+                break;
+            case 'storekeeper':
+                window.location.href = 'storekeeper-panel.html';
                 break;
             default:
                 this.redirectToRoleSelect();
         }
     }
 
-    /**
-     * Получить информацию о пользователе из токена
-     */
     getUserInfo() {
         const token = this.getToken();
         if (!token) return null;
-        
         try {
             return this.decodeToken(token);
         } catch {
@@ -157,5 +124,4 @@ class AuthService {
     }
 }
 
-// Создаем глобальный экземпляр
 const authService = new AuthService();
