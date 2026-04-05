@@ -23,7 +23,6 @@
             <button class="tab-btn" data-tab="units">⚖️ Единицы</button>
             <button class="tab-btn" data-tab="products">📦 Товары</button>
             <button class="tab-btn" data-tab="contracts">📄 Договоры</button>
-            <button class="tab-btn" data-tab="schedule">📅 График поставок</button>
         </div>
 
         <!-- Вкладка Поставщики -->
@@ -64,11 +63,10 @@
                         <tr>
                             <th>ID</th>
                             <th>Наименование</th>
-                            <th>Видимость</th>
                         </tr>
                     </thead>
                     <tbody id="unitsTableBody">
-                        <tr><td colspan="3" class="loading">Загрузка...</td></tr>
+                        <tr><td colspan="2" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -88,11 +86,10 @@
                             <th>Наименование</th>
                             <th>Ед. изм.</th>
                             <th>Критический остаток</th>
-                            <th>Видимость</th>
                         </tr>
                     </thead>
                     <tbody id="productsTableBody">
-                        <tr><td colspan="5" class="loading">Загрузка...</td></tr>
+                        <tr><td colspan="4" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -117,35 +114,6 @@
                     </thead>
                     <tbody id="contractsTableBody">
                         <tr><td colspan="5" class="loading">Загрузка...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Вкладка График поставок -->
-        <div id="scheduleTab" class="tab-content">
-            <div class="tab-header">
-                <h2>📅 График поставок</h2>
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="loadDeliverySchedule()">🔄 Обновить</button>
-                </div>
-            </div>
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 40px;">
-                                <input type="checkbox" id="selectAllSchedule" onchange="toggleSelectAllSchedule()">
-                            </th>
-                            <th>Дата</th>
-                            <th>Название товара</th>
-                            <th>Количество</th>
-                            <th>Договор</th>
-                            <th>Статус</th>
-                        </tr>
-                    </thead>
-                    <tbody id="scheduleTableBody">
-                        <tr><td colspan="6" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
