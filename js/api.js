@@ -67,7 +67,6 @@ class ApiClient {
     }
 
     // ============ User ============
-    // ✅ ИСПРАВЛЕНО: /api/users/login вместо /api/user/login
     async login(login, password) {
         const response = await this.fetchWithTimeout(
             `${this.baseURL}/api/users/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
