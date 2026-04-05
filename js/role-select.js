@@ -2,13 +2,11 @@
  * Скрипт для страницы выбора роли
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // Проверяем авторизацию
     if (!authService.isAuthenticated()) {
         authService.redirectToLogin();
         return;
     }
     
-    // Если роль уже выбрана, перенаправляем
     const existingRole = authService.getUserRole();
     if (existingRole) {
         authService.redirectToDashboard();
@@ -22,18 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let selectedRole = null;
 
-    /**
-     * Сброс выделения всех карточек
-     */
     function resetSelection() {
         [managerCard, operatorCard].forEach(card => {
             if (card) card.classList.remove('selected');
         });
     }
 
-    /**
-     * Выбор роли
-     */
     function selectRole(role) {
         resetSelection();
         
@@ -50,7 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Обработчики кликов
     if (managerCard) {
         managerCard.addEventListener('click', () => selectRole('manager'));
         managerCard.addEventListener('keypress', (e) => {
@@ -71,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Обработка продолжения
     continueBtn.addEventListener('click', () => {
         if (selectedRole) {
             const remember = rememberCheckbox.checked;
@@ -80,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Делаем карточки фокусируемыми для доступности
     [managerCard, operatorCard].forEach(card => {
         if (card) card.setAttribute('tabindex', '0');
     });
