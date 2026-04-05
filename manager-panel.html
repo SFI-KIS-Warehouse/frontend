@@ -4,109 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель менеджера - Aboba Warehouse</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/manager-panel.css">
+    <link rel="stylesheet" href="css/manager-panel.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <nav class="navbar">
         <div class="navbar-brand">Aboba Warehouse</div>
         <div class="navbar-menu">
-            <span>👔 Панель менеджера</span>
             <span id="userName">Пользователь</span>
-            <button class="logout-button" id="logoutBtn">Выйти</button>
+            <button id="logoutBtn" class="logout-button">🚪 Выйти</button>
         </div>
     </nav>
 
-    <div class="container manager-container">
+    <div class="manager-container">
         <div class="tabs">
-            <button class="tab-btn active" data-tab="providers">Поставщики</button>
-            <button class="tab-btn" data-tab="products">Товары</button>
-            <button class="tab-btn" data-tab="units">Единицы измерения</button>
-            <button class="tab-btn" data-tab="contracts">Договоры</button>
+            <button class="tab-btn active" data-tab="providers">🏢 Поставщики</button>
+            <button class="tab-btn" data-tab="units">⚖️ Единицы</button>
+            <button class="tab-btn" data-tab="products">📦 Товары</button>
+            <button class="tab-btn" data-tab="contracts">📄 Договоры</button>
+            <button class="tab-btn" data-tab="schedule">📅 График поставок</button>
         </div>
 
         <!-- Вкладка Поставщики -->
-<div id="providersTab" class="tab-content active">
-    <div class="tab-header">
-        <h2>Управление поставщиками</h2>
-        <button class="btn btn-primary" onclick="showAddProviderModal()">➕ Добавить поставщика</button>
-    </div>
-    <div class="table-container">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Наименование</th>
-                    <th>ИНН</th>
-                    <th>БИК</th>
-                    <th>Расчетный счет</th>
-                    <th>Директор</th>
-                    <th>Бухгалтер</th>
-                </tr>
-            </thead>
-            <tbody id="providersTableBody">
-                <tr><td colspan="7" class="loading">Загрузка...</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-        <div id="productsTab" class="tab-content">
+        <div id="providersTab" class="tab-content active">
             <div class="tab-header">
-                <h2>Управление товарами</h2>
-                <button class="btn btn-primary" onclick="showAddProductModal()">
-                    ➕ Добавить товар
-                </button>
+                <h2>Управление поставщиками</h2>
+                <button class="btn btn-primary" onclick="showAddProviderModal()">➕ Добавить поставщика</button>
             </div>
             <div class="table-container">
-                <table class="data-table" id="productsTable">
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Наименование</th>
-                            <th>Единица измерения</th>
-                            <th>Критический остаток</th>
+                            <th>ИНН</th>
+                            <th>БИК</th>
+                            <th>Расчетный счет</th>
+                            <th>Директор</th>
+                            <th>Бухгалтер</th>
                         </tr>
                     </thead>
-                    <tbody id="productsTableBody">
-                        <tr><td colspan="4" class="loading">Загрузка...</td></tr>
+                    <tbody id="providersTableBody">
+                        <tr><td colspan="7" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- Вкладка Единицы -->
         <div id="unitsTab" class="tab-content">
             <div class="tab-header">
                 <h2>Единицы измерения</h2>
-                <button class="btn btn-primary" onclick="showAddUnitModal()">
-                    ➕ Добавить единицу измерения
-                </button>
+                <button class="btn btn-primary" onclick="showAddUnitModal()">➕ Добавить единицу</button>
             </div>
             <div class="table-container">
-                <table class="data-table" id="unitsTable">
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Наименование</th>
+                            <th>Видимость</th>
                         </tr>
                     </thead>
                     <tbody id="unitsTableBody">
-                        <tr><td colspan="2" class="loading">Загрузка...</td></tr>
+                        <tr><td colspan="3" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <div id="contractsTab" class="tab-content">
+        <!-- Вкладка Товары -->
+        <div id="productsTab" class="tab-content">
             <div class="tab-header">
-                <h2>Договоры с поставщиками</h2>
-                <button class="btn btn-primary" onclick="showAddContractModal()">
-                    ➕ Создать договор
-                </button>
+                <h2>Товары</h2>
+                <button class="btn btn-primary" onclick="showAddProductModal()">➕ Добавить товар</button>
             </div>
             <div class="table-container">
-                <table class="data-table" id="contractsTable">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Наименование</th>
+                            <th>Ед. изм.</th>
+                            <th>Критический остаток</th>
+                            <th>Видимость</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <tr><td colspan="5" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Вкладка Договоры -->
+        <div id="contractsTab" class="tab-content">
+            <div class="tab-header">
+                <h2>Договоры</h2>
+                <button class="btn btn-primary" onclick="showAddContractModal()">➕ Создать договор</button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -122,12 +121,41 @@
                 </table>
             </div>
         </div>
+
+        <!-- Вкладка График поставок -->
+        <div id="scheduleTab" class="tab-content">
+            <div class="tab-header">
+                <h2>📅 График поставок</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="loadDeliverySchedule()">🔄 Обновить</button>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAllSchedule" onchange="toggleSelectAllSchedule()">
+                            </th>
+                            <th>Дата</th>
+                            <th>Название товара</th>
+                            <th>Количество</th>
+                            <th>Договор</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody">
+                        <tr><td colspan="6" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <script src="/js/config.js"></script>
-    <script src="/js/auth.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/components.js"></script>
-    <script src="/js/manager-panel.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/manager-panel.js"></script>
 </body>
 </html>
