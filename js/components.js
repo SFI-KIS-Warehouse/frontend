@@ -184,6 +184,10 @@ class Modal {
                 .status-signed { background: #cce5ff; color: #004085; }
                 .status-cancelled { background: #f8d7da; color: #721c24; }
                 .status-shipped { background: #d4edda; color: #155724; }
+                .status-overdue { background: #f8d7da; color: #721c24; }
+                .status-today { background: #fff3cd; color: #856404; }
+                .status-upcoming { background: #d4edda; color: #155724; }
+                .status-future { background: #e2e3e5; color: #383d41; }
                 .product-item {
                     border: 1px solid #eee;
                     padding: 15px;
@@ -214,6 +218,54 @@ class Modal {
                     margin-top: 10px;
                 }
                 .add-product-btn:hover { opacity: 0.9; }
+                .schedule-row-item {
+                    background: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    margin-top: 10px;
+                    border: 1px solid #ddd;
+                }
+                .schedule-row {
+                    cursor: pointer;
+                    transition: background 0.2s ease;
+                }
+                .schedule-row:hover {
+                    background: #f0f2f5;
+                }
+                .schedule-row.received {
+                    background: #e8f5e9;
+                }
+                .contract-link {
+                    color: #667eea;
+                    text-decoration: none;
+                    font-weight: 600;
+                    padding: 6px 12px;
+                    background: #f0f2f5;
+                    border-radius: 6px;
+                    transition: all 0.3s ease;
+                    display: inline-block;
+                }
+                .contract-link:hover {
+                    background: #667eea;
+                    color: white;
+                    text-decoration: none;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+                }
+                .contract-product-section {
+                    background: #f8f9fa;
+                    padding: 20px;
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                    border: 2px solid #e1e5e9;
+                }
+                .product-schedule-container {
+                    min-height: 50px;
+                    padding: 10px;
+                    background: white;
+                    border-radius: 8px;
+                    border: 1px dashed #ddd;
+                }
             </style>
         `;
         
