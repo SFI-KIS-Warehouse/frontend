@@ -5,7 +5,6 @@ let providers = [];
 let products = [];
 let units = [];
 let contracts = [];
-let deliverySchedule = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!authService.isAuthenticated()) {
@@ -44,10 +43,6 @@ function setupTabs() {
             
             btn.classList.add('active');
             document.getElementById(`${tabId}Tab`).classList.add('active');
-            
-            if (tabId === 'schedule') {
-                loadDeliverySchedule();
-            }
         });
     });
 }
@@ -93,7 +88,6 @@ function renderProvidersTable() {
     }
 
     tbody.innerHTML = providers.map(provider => {
-        // ✅ Исправлено: проверка на null/undefined/0 для ИНН
         const inn = (provider.itn !== null && provider.itn !== undefined && provider.itn !== 0) 
             ? String(provider.itn) 
             : '-';
@@ -159,7 +153,6 @@ function showAddProviderModal() {
     
     modal.show(modalContent);
 
-    // Валидация - только цифры
     const innInput = document.getElementById('providerItn');
     if (innInput) {
         innInput.addEventListener('input', () => {
@@ -191,12 +184,11 @@ function showAddProviderModal() {
             return;
         }
         
-        // ✅ Исправлено: settlementAccount как СТРОКА (UInt64)
         const providerData = {
             name: document.getElementById('providerName').value,
             itn: parseInt(innValue, 10),
             bic: parseInt(bicValue, 10),
-            settlementAccount: accountValue.toString(),  // ✅ СТРОКА!
+            settlementAccount: accountValue.toString(),
             directorFullName: document.getElementById('providerDirector').value,
             accountantFullName: document.getElementById('providerAccountant').value
         };
@@ -224,14 +216,14 @@ async function loadUnits() {
         renderUnitsTable();
     } catch (error) {
         document.getElementById('unitsTableBody').innerHTML = 
-            '<tr><td colspan="3" class="error">Ошибка загрузки</td></tr>';
+            '<tr><td colspan="2" class="error">Ошибка загрузки</td></tr>';
     }
 }
 
 function renderUnitsTable() {
     const tbody = document.getElementById('unitsTableBody');
     if (!units.length) {
-        tbody.innerHTML = '<tr><td colspan="3" class="loading">Нет данных</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="2" class="loading">Нет данных</td></tr>';
         return;
     }
 
@@ -239,24 +231,8 @@ function renderUnitsTable() {
         <tr>
             <td>${unit.id}</td>
             <td>${unit.name}</td>
-            <td>
-                <button class="btn-icon ${unit.isHidden ? 'btn-warning' : 'btn-success'}" 
-                        onclick="toggleUnitVisibility(${unit.id}, ${!unit.isHidden})">
-                    ${unit.isHidden ? '👁️ Показать' : '🙈 Скрыть'}
-                </button>
-            </td>
         </tr>
     `).join('');
-}
-
-async function toggleUnitVisibility(id, isHidden) {
-    try {
-        await api.changeUnitVisibility(id, isHidden);
-        await loadUnits();
-        showNotification(`Единица измерения ${isHidden ? 'скрыта' : 'показана'}`, 'success');
-    } catch (error) {
-        showNotification(error.message, 'error');
-    }
 }
 
 function showAddUnitModal() {
@@ -280,6 +256,7 @@ function showAddUnitModal() {
 
     document.getElementById('addUnitForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        
         const name = document.getElementById('unitName').value;
 
         try {
@@ -292,7 +269,11 @@ function showAddUnitModal() {
             await loadUnits();
             showNotification(`Единица измерения добавлена с ID: ${id}`, 'success');
         } catch (error) {
-            showNotification(error.message, 'error');
+            if (error.message.includes('Conflict')) {
+                showNotification('Такая единица измерения уже существует', 'error');
+            } else {
+                showNotification(error.message, 'error');
+            }
         }
     });
 }
@@ -304,14 +285,14 @@ async function loadProducts() {
         renderProductsTable();
     } catch (error) {
         document.getElementById('productsTableBody').innerHTML = 
-            '<tr><td colspan="5" class="error">Ошибка загрузки</td></tr>';
+            '<tr><td colspan="4" class="error">Ошибка загрузки</td></tr>';
     }
 }
 
 function renderProductsTable() {
     const tbody = document.getElementById('productsTableBody');
     if (!products.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="loading">Нет данных</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" class="loading">Нет данных</td></tr>';
         return;
     }
 
@@ -321,24 +302,8 @@ function renderProductsTable() {
             <td>${product.name}</td>
             <td>${product.unit?.name || '-'}</td>
             <td>${product.criticalBalance ?? 0}</td>
-            <td>
-                <button class="btn-icon ${product.isHidden ? 'btn-warning' : 'btn-success'}" 
-                        onclick="toggleProductVisibility(${product.id}, ${!product.isHidden})">
-                    ${product.isHidden ? '👁️ Показать' : '🙈 Скрыть'}
-                </button>
-            </td>
         </tr>
     `).join('');
-}
-
-async function toggleProductVisibility(id, isHidden) {
-    try {
-        await api.changeProductVisibility(id, isHidden);
-        await loadProducts();
-        showNotification(`Товар ${isHidden ? 'скрыт' : 'показан'}`, 'success');
-    } catch (error) {
-        showNotification(error.message, 'error');
-    }
 }
 
 function showAddProductModal() {
@@ -382,6 +347,7 @@ function showAddProductModal() {
     if (form) {
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            
             const productData = {
                 name: document.getElementById('productName').value,
                 unit: parseInt(document.getElementById('productUnit').value),
@@ -411,14 +377,14 @@ async function loadContracts() {
         renderContractsTable();
     } catch (error) {
         document.getElementById('contractsTableBody').innerHTML = 
-            '<tr><td colspan="6" class="error">Ошибка загрузки</td></tr>';
+            '<tr><td colspan="5" class="error">Ошибка загрузки</td></tr>';
     }
 }
 
 function renderContractsTable() {
     const tbody = document.getElementById('contractsTableBody');
     if (!contracts.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Нет данных</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">Нет данных</td></tr>';
         return;
     }
 
@@ -435,7 +401,6 @@ function renderContractsTable() {
             <td>
                 <div class="action-buttons">
                     <button class="btn-icon btn-view" onclick="viewContract(${contract.id})">👁️ Просмотр</button>
-                    <button class="btn-icon btn-success" onclick="openAddScheduleModal(${contract.id})">📅 График</button>
                 </div>
             </td>
         </tr>
@@ -475,31 +440,54 @@ function showContractModal(contract) {
                         ${CONFIG.CONTRACT_STATUSES[contract.status]?.name || 'Неизвестно'}
                     </span>
                 </p>
+                
                 <h4>Товары в договоре:</h4>
                 <table class="data-table">
                     <thead>
-                        <tr><th>Товар</th><th>Количество</th><th>Цена</th><th>Сумма</th></tr>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Количество</th>
+                            <th>Цена</th>
+                            <th>Сумма</th>
+                        </tr>
                     </thead>
-                    <tbody>${productRows}</tbody>
+                    <tbody>
+                        ${productRows}
+                    </tbody>
                     <tfoot>
-                        <tr><td colspan="3"><strong>Итого:</strong></td><td><strong>${total}</strong></td></tr>
+                        <tr>
+                            <td colspan="3"><strong>Итого:</strong></td>
+                            <td><strong>${total}</strong></td>
+                        </tr>
                     </tfoot>
                 </table>
+
+                <h4>Изменить статус:</h4>
+                <select id="changeStatusSelect" class="form-control">
+                    ${Object.entries(CONFIG.CONTRACT_STATUSES).map(([key, value]) => `
+                        <option value="${key}" ${contract.status === parseInt(key) ? 'selected' : ''}>
+                            ${value.name}
+                        </option>
+                    `).join('')}
+                </select>
+
                 <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="modal.hide()">Закрыть</button>
-                    <button type="button" class="btn btn-success" onclick="modal.hide(); openAddScheduleModal(${contract.id})">
-                        📅 Добавить график
+                    <button type="button" class="btn btn-primary" onclick="changeContractStatus(${contract.id})">
+                        Изменить статус
                     </button>
                 </div>
             </div>
         `
     };
+
     modal.show(modalContent);
 }
 
 async function changeContractStatus(id) {
     const select = document.getElementById('changeStatusSelect');
     const newStatus = parseInt(select.value);
+    
     try {
         await api.changeContractStatus(id, newStatus);
         modal.hide();
@@ -510,207 +498,13 @@ async function changeContractStatus(id) {
     }
 }
 
-// ============ Delivery Schedule ============
-async function loadDeliverySchedule() {
-    try {
-        deliverySchedule = await api.getDeliverySchedule();
-        renderScheduleTable();
-    } catch (error) {
-        document.getElementById('scheduleTableBody').innerHTML = 
-            '<tr><td colspan="6" class="error">Ошибка загрузки</td></tr>';
-    }
-}
-
-function getScheduleStatus(dateStr) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const scheduleDate = new Date(dateStr);
-    scheduleDate.setHours(0, 0, 0, 0);
-    const diffDays = Math.ceil((scheduleDate - today) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays < 0) return { class: 'status-overdue', icon: '🔴', text: 'Просрочка' };
-    if (diffDays === 0) return { class: 'status-today', icon: '🟡', text: 'Сегодня' };
-    if (diffDays <= 7) return { class: 'status-upcoming', icon: '🟢', text: 'Ожидается' };
-    return { class: 'status-future', icon: '⚪', text: 'Запланировано' };
-}
-
-function renderScheduleTable() {
-    const tbody = document.getElementById('scheduleTableBody');
-    if (!deliverySchedule.length) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Нет данных</td></tr>';
-        return;
-    }
-
-    const sorted = [...deliverySchedule].sort((a, b) => new Date(a.date) - new Date(b.date));
-    tbody.innerHTML = sorted.map(entry => {
-        const status = getScheduleStatus(entry.date);
-        const isReceived = entry.relatedReceipt !== null && entry.relatedReceipt !== undefined;
-        return `
-            <tr class="schedule-row ${isReceived ? 'received' : ''}" data-id="${entry.id}">
-                <td><input type="checkbox" class="schedule-select" value="${entry.id}"></td>
-                <td>${new Date(entry.date).toLocaleDateString('ru-RU')}</td>
-                <td>${entry.product?.name || 'Товар #' + entry.product}</td>
-                <td>${entry.count}</td>
-                <td>#${entry.contract}</td>
-                <td>
-                    <span class="status-badge ${status.class}">
-                        ${isReceived ? '✅ Поступило' : status.icon + ' ' + status.text}
-                    </span>
-                </td>
-            </tr>
-        `;
-    }).join('');
-}
-
-// ✅ НОВАЯ ФУНКЦИЯ: Выбор всех записей
-function toggleSelectAllSchedule() {
-    const selectAll = document.getElementById('selectAllSchedule');
-    const checkboxes = document.querySelectorAll('.schedule-select');
-    checkboxes.forEach(cb => cb.checked = selectAll.checked);
-}
-
-function openAddScheduleModal(contractId) {
-    const contract = contracts.find(c => c.id === contractId);
-    if (!contract) { showNotification('Договор не найден', 'error'); return; }
-
-    const productOptions = contract.productInfo?.map(info => `
-        <option value="${info.product?.id || info.product}" data-name="${info.product?.name || 'Товар'}">
-            ${info.product?.name || 'Товар #' + info.product}
-        </option>
-    `).join('') || '<option value="">Нет товаров</option>';
-
-    const modalContent = {
-        title: `📅 График для договора #${contractId}`,
-        body: `
-            <form id="addScheduleForm" data-contract-id="${contractId}">
-                <div class="form-group">
-                    <label>Товар *</label>
-                    <select id="scheduleProduct" required onchange="addScheduleRow()">
-                        <option value="">Выберите товар</option>
-                        ${productOptions}
-                    </select>
-                </div>
-                <div id="scheduleRowsContainer"></div>
-                <button type="button" class="btn btn-secondary" onclick="addScheduleRow()" style="margin-top:10px">
-                    ➕ Добавить дату
-                </button>
-                <div class="form-actions" style="margin-top:20px">
-                    <button type="button" class="btn btn-secondary" onclick="modal.hide()">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
-                </div>
-            </form>
-        `
-    };
-    modal.show(modalContent);
-    window.scheduleRowCounter = 0;
-}
-
-function addScheduleRow() {
-    const container = document.getElementById('scheduleRowsContainer');
-    if (!container) return;
-    const productId = `schedule_row_${window.scheduleRowCounter++}`;
-    const productSelect = document.getElementById('scheduleProduct');
-    const productName = productSelect.options[productSelect.selectedIndex]?.dataset?.name || 'Товар';
-
-    const rowHtml = `
-        <div class="schedule-row-item" id="${productId}" style="background:#f8f9fa;padding:15px;border-radius:8px;margin-top:10px">
-            <div class="form-row">
-                <div class="form-group" style="margin-bottom:0">
-                    <label>Дата *</label>
-                    <input type="date" class="schedule-date" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0">
-                    <label>Количество *</label>
-                    <input type="number" class="schedule-count" min="1" required>
-                </div>
-                <div class="form-group" style="margin-bottom:0;display:flex;align-items:end">
-                    <button type="button" class="btn btn-danger" onclick="removeScheduleRow('${productId}')" style="padding:10px 15px">🗑️</button>
-                </div>
-            </div>
-            <input type="hidden" class="schedule-product-id" value="${productSelect.value}">
-            <input type="hidden" class="schedule-product-name" value="${productName}">
-        </div>
-    `;
-    container.insertAdjacentHTML('beforeend', rowHtml);
-}
-
-function removeScheduleRow(id) {
-    document.getElementById(id)?.remove();
-}
-
-// Обработчик отправки форм
-document.addEventListener('submit', async (e) => {
-    if (e.target.id === 'addScheduleForm') {
-        e.preventDefault();
-        const rows = document.querySelectorAll('.schedule-row-item');
-        const entries = [];
-        const contractId = parseInt(e.target.dataset?.contractId || '1');
-        
-        for (const row of rows) {
-            const date = row.querySelector('.schedule-date')?.value;
-            const count = row.querySelector('.schedule-count')?.value;
-            const productId = row.querySelector('.schedule-product-id')?.value;
-            if (date && count && productId) {
-                entries.push({ date, contract: contractId, product: parseInt(productId), count: parseInt(count) });
-            }
-        }
-        
-        if (entries.length === 0) { showNotification('Добавьте хотя бы одну дату', 'error'); return; }
-        
-        try {
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Сохранение...';
-            for (const entry of entries) await api.addDeliveryScheduleEntry(entry);
-            modal.hide();
-            await loadDeliverySchedule();
-            showNotification(`График добавлен (${entries.length} записей)`, 'success');
-        } catch (error) {
-            showNotification(error.message, 'error');
-        }
-    }
-    
-    if (e.target.id === 'addContractForm') {
-        e.preventDefault();
-        const providerId = parseInt(document.getElementById('contractProvider').value);
-        const productItems = document.querySelectorAll('.product-item');
-        const productInfo = [];
-        
-        for (const item of productItems) {
-            const select = item.querySelector('.product-select');
-            const count = item.querySelector('.product-count');
-            const price = item.querySelector('.product-price');
-            if (select.value && count.value && price.value) {
-                productInfo.push({
-                    product: parseInt(select.value),
-                    count: parseInt(count.value),
-                    price: parseFloat(price.value)
-                });
-            }
-        }
-        
-        if (productInfo.length === 0) { showNotification('Добавьте хотя бы один товар', 'error'); return; }
-        
-        try {
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Создание...';
-            const id = await api.addContract({ provider: providerId, productInfo });
-            modal.hide();
-            await loadContracts();
-            showNotification(`Договор создан с ID: ${id}`, 'success');
-        } catch (error) {
-            showNotification(error.message, 'error');
-        }
-    }
-});
-
 function showAddContractModal() {
     Promise.all([
         providers.length ? Promise.resolve() : loadProviders(),
         products.length ? Promise.resolve() : loadProducts()
     ]).then(() => {
         const providerOptions = providers.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        
         const modalContent = {
             title: 'Создание договора',
             body: `
@@ -722,8 +516,13 @@ function showAddContractModal() {
                             ${providerOptions}
                         </select>
                     </div>
+                    
                     <div id="productsContainer"></div>
-                    <button type="button" class="add-product-btn" onclick="addProductToContract()">➕ Добавить товар</button>
+
+                    <button type="button" class="add-product-btn" onclick="addProductToContract()">
+                        ➕ Добавить товар
+                    </button>
+
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="modal.hide()">Отмена</button>
                         <button type="submit" class="btn btn-primary">Создать договор</button>
@@ -731,6 +530,7 @@ function showAddContractModal() {
                 </form>
             `
         };
+
         modal.show(modalContent);
         window.productCounter = 0;
         addProductToContract();
@@ -740,9 +540,11 @@ function showAddContractModal() {
 function addProductToContract() {
     const container = document.getElementById('productsContainer');
     if (!container) return;
-    const productId = `product_${window.productCounter++}`;
-    const productOptions = products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
     
+    const productId = `product_${window.productCounter++}`;
+
+    const productOptions = products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+
     const productHtml = `
         <div class="product-item" id="${productId}">
             <div class="product-item-header">
@@ -768,12 +570,60 @@ function addProductToContract() {
             </div>
         </div>
     `;
+
     container.insertAdjacentHTML('beforeend', productHtml);
 }
 
 function removeProductFromContract(id) {
     document.getElementById(id)?.remove();
 }
+
+document.addEventListener('submit', async (e) => {
+    if (e.target.id === 'addContractForm') {
+        e.preventDefault();
+        
+        const providerId = parseInt(document.getElementById('contractProvider').value);
+        const productItems = document.querySelectorAll('.product-item');
+
+        const productInfo = [];
+        for (const item of productItems) {
+            const select = item.querySelector('.product-select');
+            const count = item.querySelector('.product-count');
+            const price = item.querySelector('.product-price');
+
+            if (select.value && count.value && price.value) {
+                productInfo.push({
+                    product: parseInt(select.value),
+                    count: parseInt(count.value),
+                    price: parseFloat(price.value)
+                });
+            }
+        }
+
+        if (productInfo.length === 0) {
+            showNotification('Добавьте хотя бы один товар', 'error');
+            return;
+        }
+
+        const contractData = {
+            provider: providerId,
+            productInfo: productInfo
+        };
+
+        try {
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Создание...';
+
+            const id = await api.addContract(contractData);
+            modal.hide();
+            await loadContracts();
+            showNotification(`Договор создан с ID: ${id}`, 'success');
+        } catch (error) {
+            showNotification(error.message, 'error');
+        }
+    }
+});
 
 // Глобальные функции
 window.showAddProviderModal = showAddProviderModal;
@@ -784,9 +634,3 @@ window.viewContract = viewContract;
 window.addProductToContract = addProductToContract;
 window.removeProductFromContract = removeProductFromContract;
 window.changeContractStatus = changeContractStatus;
-window.openAddScheduleModal = openAddScheduleModal;
-window.addScheduleRow = addScheduleRow;
-window.removeScheduleRow = removeScheduleRow;
-window.toggleSelectAllSchedule = toggleSelectAllSchedule;
-window.toggleUnitVisibility = toggleUnitVisibility;
-window.toggleProductVisibility = toggleProductVisibility;
