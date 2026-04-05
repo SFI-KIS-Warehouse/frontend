@@ -67,9 +67,10 @@ class ApiClient {
     }
 
     // ============ User ============
+    // ✅ ИСПРАВЛЕНО: /api/users/login вместо /api/user/login
     async login(login, password) {
         const response = await this.fetchWithTimeout(
-            `${this.baseURL}/api/user/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
+            `${this.baseURL}/api/users/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
             { headers: { 'Accept': 'text/plain' } }
         );
         if (!response.ok) {
@@ -125,14 +126,6 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    async changeUnitVisibility(id, isHidden) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/units/${id}/changeVisibility?isHidden=${isHidden}`, {
-            method: 'GET',
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
     // ============ Products ============
     async getProducts() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/products`, {
@@ -153,14 +146,6 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(productData)
-        });
-        return this.handleResponse(response);
-    }
-
-    async changeProductVisibility(id, isHidden) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products/${id}/changeVisibility?isHidden=${isHidden}`, {
-            method: 'GET',
-            headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
@@ -193,30 +178,6 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(contractData)
-        });
-        return this.handleResponse(response);
-    }
-
-    // ============ Delivery Schedule ============
-    async getDeliverySchedule() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async getDeliveryScheduleEntry(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/${id}`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async addDeliveryScheduleEntry(entryData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/addEntry`, {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify(entryData)
         });
         return this.handleResponse(response);
     }
@@ -277,10 +238,26 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ============ Statistics ============
-    async getProductStats() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/productStats`, {
+    // ============ Delivery Schedule ============
+    async getDeliverySchedule() {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
             headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async getDeliveryScheduleEntry(id) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/${id}`, {
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async addDeliveryScheduleEntry(entryData) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/addEntry`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(entryData)
         });
         return this.handleResponse(response);
     }
