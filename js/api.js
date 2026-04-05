@@ -102,15 +102,6 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ✅ НОВОЕ: Удаление поставщика
-    async deleteProvider(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers/${id}`, {
-            method: 'DELETE',
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
     // ============ Units ============
     async getUnits() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/units`, {
@@ -129,6 +120,14 @@ class ApiClient {
     async addUnit(name) {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/units/add?name=${encodeURIComponent(name)}`, {
             method: 'POST',
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async changeUnitVisibility(id, isHidden) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/units/${id}/changeVisibility?isHidden=${isHidden}`, {
+            method: 'GET',
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
@@ -158,10 +157,9 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ✅ НОВОЕ: Удаление товара
-    async deleteProduct(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products/${id}`, {
-            method: 'DELETE',
+    async changeProductVisibility(id, isHidden) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/products/${id}/changeVisibility?isHidden=${isHidden}`, {
+            method: 'GET',
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
@@ -195,6 +193,30 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(contractData)
+        });
+        return this.handleResponse(response);
+    }
+
+    // ============ Delivery Schedule ============
+    async getDeliverySchedule() {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async getDeliveryScheduleEntry(id) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/${id}`, {
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async addDeliveryScheduleEntry(entryData) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/addEntry`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(entryData)
         });
         return this.handleResponse(response);
     }
@@ -255,26 +277,10 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
-    // ============ Delivery Schedule ============
-    async getDeliverySchedule() {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
+    // ============ Statistics ============
+    async getProductStats() {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/productStats`, {
             headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async getDeliveryScheduleEntry(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/${id}`, {
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
-    }
-
-    async addDeliveryScheduleEntry(entryData) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule/addEntry`, {
-            method: 'POST',
-            headers: this.getHeaders(),
-            body: JSON.stringify(entryData)
         });
         return this.handleResponse(response);
     }
