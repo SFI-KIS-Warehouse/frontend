@@ -81,7 +81,6 @@ class AuthService {
         return localStorage.getItem(this.USER_ROLE_KEY) || sessionStorage.getItem(this.USER_ROLE_KEY);
     }
 
-    // ✅ НОВЫЙ МЕТОД: Сброс роли для возврата к выбору
     resetRole() {
         localStorage.removeItem(this.USER_ROLE_KEY);
         sessionStorage.removeItem(this.USER_ROLE_KEY);
