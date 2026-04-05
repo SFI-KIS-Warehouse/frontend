@@ -22,13 +22,14 @@
 .products-header h1 {
     color: #333;
     font-size: 28px;
-    margin-bottom: 8px;
+    margin: 0 0 8px 0;
     font-weight: 600;
 }
 
 .products-header p {
     color: #666;
     font-size: 16px;
+    margin: 0;
 }
 
 /* ============ Быстрые действия ============ */
@@ -59,11 +60,6 @@
 
 .quick-action-btn.outcome {
     background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-    color: white;
-}
-
-.quick-action-btn.inventory {
-    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
     color: white;
 }
 
@@ -146,40 +142,6 @@
     display: inline-block;
 }
 
-/* Кнопки действий в таблице */
-.products-table .action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.products-table .action-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.action-btn.move {
-    background: #17a2b8;
-    color: white;
-}
-
-.action-btn.history {
-    background: #6c757d;
-    color: white;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 /* ============ Поиск и фильтры ============ */
 .search-section {
     background: white;
@@ -200,6 +162,7 @@
     border-radius: 10px;
     font-size: 15px;
     transition: all 0.3s ease;
+    color: #333;
 }
 
 .search-input:focus {
@@ -217,6 +180,7 @@
     background: white;
     cursor: pointer;
     transition: all 0.3s ease;
+    color: #333;
 }
 
 .filter-select:focus {
@@ -236,33 +200,24 @@
     .products-header h1 {
         font-size: 24px;
     }
-    
+
     .quick-actions {
         width: 100%;
         flex-direction: column;
     }
-    
+
     .quick-action-btn {
         width: 100%;
         justify-content: center;
     }
-    
+
     .search-section {
         flex-direction: column;
         padding: 15px;
     }
-    
+
     .filter-select {
         width: 100%;
-    }
-    
-    .products-table .action-buttons {
-        flex-direction: column;
-    }
-    
-    .products-table .action-btn {
-        width: 100%;
-        justify-content: center;
     }
 }
 
