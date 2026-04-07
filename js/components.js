@@ -43,9 +43,10 @@ class Modal {
             if (e.target === overlay) this.hide();
         };
 
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function escapeHandler(e) {
             if (e.key === 'Escape') {
                 this.hide();
+                document.removeEventListener('keydown', escapeHandler);
             }
         }.bind(this));
     }
@@ -60,6 +61,14 @@ class Modal {
     addModalStyles() {
         if (document.getElementById('modalStyles')) return;
         
+        const isDark = document.body.classList.contains('dark-theme');
+        const bgColor = isDark ? '#1a1a1a' : '#ffffff';
+        const headerBg = isDark ? '#0a0a0a' : '#f5f5f5';
+        const textColor = isDark ? '#e0e0e0' : '#333333';
+        const labelColor = isDark ? '#b0b0b0' : '#555555';
+        const borderColor = isDark ? '#333333' : '#dddddd';
+        const inputBg = isDark ? '#0a0a0a' : '#ffffff';
+        
         const styles = `
             <style id="modalStyles">
                 .modal-overlay {
@@ -68,203 +77,225 @@ class Modal {
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background: rgba(0, 0, 0, 0.5);
+                    background: rgba(0, 0, 0, 0.85);
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     z-index: 1000;
+                    backdrop-filter: blur(5px);
                 }
+
                 .modal-content {
-                    background: white;
-                    border-radius: 10px;
+                    background: ${bgColor};
+                    border-radius: 5px;
                     max-width: 600px;
                     width: 90%;
                     max-height: 80vh;
                     overflow-y: auto;
-                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+                    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+                    border: 1px solid ${borderColor};
                 }
+
                 .modal-header {
                     padding: 20px;
-                    border-bottom: 1px solid #eee;
+                    border-bottom: 1px solid ${borderColor};
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                    background: ${headerBg};
                 }
+
                 .modal-header h3 {
                     margin: 0;
-                    color: #333;
+                    color: ${textColor};
+                    font-size: 18px;
+                    font-weight: 600;
                 }
+
                 .modal-close {
                     background: none;
                     border: none;
                     font-size: 24px;
                     cursor: pointer;
-                    color: #999;
+                    color: ${isDark ? '#666' : '#999'};
+                    transition: color 0.3s ease;
+                    padding: 0;
+                    width: 30px;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
+
                 .modal-close:hover {
-                    color: #333;
+                    color: ${textColor};
+                    background: ${isDark ? '#2d2d2d' : '#e0e0e0'};
+                    border-radius: 3px;
                 }
+
                 .modal-body {
                     padding: 20px;
+                    background: ${bgColor};
                 }
-                .form-group {
+
+                .modal-body .form-group {
                     margin-bottom: 15px;
                 }
-                .form-group label {
+
+                .modal-body .form-group label {
                     display: block;
                     margin-bottom: 5px;
-                    color: #555;
+                    color: ${labelColor};
                     font-weight: 500;
-                }
-                .form-group input,
-                .form-group select,
-                .form-group textarea {
-                    width: 100%;
-                    padding: 10px;
-                    border: 1px solid #ddd;
-                    border-radius: 5px;
                     font-size: 14px;
                 }
-                .form-group input:focus,
-                .form-group select:focus {
-                    outline: none;
-                    border-color: #667eea;
+
+                .modal-body .form-group input,
+                .modal-body .form-group select,
+                .modal-body .form-group textarea {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid ${borderColor};
+                    border-radius: 3px;
+                    font-size: 14px;
+                    background: ${inputBg};
+                    color: ${textColor};
                 }
-                .form-row {
+
+                .modal-body .form-group input:focus,
+                .modal-body .form-group select:focus,
+                .modal-body .form-group textarea:focus {
+                    outline: none;
+                    border-color: ${isDark ? '#666' : '#667eea'};
+                    background: ${isDark ? '#1a1a1a' : '#f8f9fa'};
+                }
+
+                .modal-body .form-row {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     gap: 15px;
                 }
-                .form-actions {
+
+                .modal-body .form-actions {
                     display: flex;
                     justify-content: flex-end;
                     gap: 10px;
                     margin-top: 20px;
+                    padding-top: 20px;
+                    border-top: 1px solid ${borderColor};
                 }
-                .btn {
-                    padding: 10px 20px;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    font-size: 14px;
-                    font-weight: 500;
-                }
-                .btn-primary {
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                }
-                .btn-secondary {
-                    background: #6c757d;
-                    color: white;
-                }
-                .btn-success {
-                    background: #28a745;
-                    color: white;
-                }
-                .btn-danger {
-                    background: #dc3545;
-                    color: white;
-                }
-                .btn:hover {
-                    opacity: 0.9;
-                }
-                .btn:disabled {
-                    opacity: 0.5;
-                    cursor: not-allowed;
-                }
-                .status-badge {
-                    display: inline-block;
-                    padding: 6px 12px;
-                    border-radius: 20px;
-                    font-size: 12px;
-                    font-weight: 600;
-                }
-                .status-created { background: #fff3cd; color: #856404; }
-                .status-approved { background: #d4edda; color: #155724; }
-                .status-signed { background: #cce5ff; color: #004085; }
-                .status-cancelled { background: #f8d7da; color: #721c24; }
-                .status-shipped { background: #d4edda; color: #155724; }
-                .status-overdue { background: #f8d7da; color: #721c24; }
-                .status-today { background: #fff3cd; color: #856404; }
-                .status-upcoming { background: #d4edda; color: #155724; }
-                .status-future { background: #e2e3e5; color: #383d41; }
-                .product-item {
-                    border: 1px solid #eee;
+
+                .modal-body .product-item {
+                    border: 1px solid ${borderColor};
                     padding: 15px;
                     border-radius: 5px;
                     margin-bottom: 10px;
+                    background: ${inputBg};
                 }
-                .product-item-header {
+
+                .modal-body .product-item-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 10px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid ${borderColor};
                 }
-                .remove-btn {
+
+                .modal-body .product-item-header h4 {
+                    color: ${textColor};
+                    font-size: 16px;
+                    font-weight: 600;
+                    margin: 0;
+                }
+
+                .modal-body .remove-btn {
                     background: none;
-                    border: none;
-                    color: #dc3545;
+                    border: 1px solid #f44336;
+                    color: #f44336;
                     font-size: 18px;
                     cursor: pointer;
+                    padding: 0 8px;
+                    border-radius: 3px;
+                    width: 30px;
+                    height: 30px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                 }
-                .add-product-btn {
-                    background: #28a745;
+
+                .modal-body .remove-btn:hover {
+                    background: #f44336;
                     color: white;
-                    border: none;
+                }
+
+                .modal-body .add-product-btn {
+                    background: ${isDark ? '#1a1a1a' : '#28a745'};
+                    color: ${isDark ? '#4caf50' : 'white'};
+                    border: 1px solid #4caf50;
                     padding: 10px;
-                    border-radius: 5px;
+                    border-radius: 3px;
                     cursor: pointer;
                     width: 100%;
                     margin-top: 10px;
-                }
-                .add-product-btn:hover { opacity: 0.9; }
-                .schedule-row-item {
-                    background: white;
-                    padding: 15px;
-                    border-radius: 8px;
-                    margin-top: 10px;
-                    border: 1px solid #ddd;
-                }
-                .schedule-row {
-                    cursor: pointer;
-                    transition: background 0.2s ease;
-                }
-                .schedule-row:hover {
-                    background: #f0f2f5;
-                }
-                .schedule-row.received {
-                    background: #e8f5e9;
-                }
-                .contract-link {
-                    color: #667eea;
-                    text-decoration: none;
+                    font-size: 14px;
                     font-weight: 600;
-                    padding: 6px 12px;
-                    background: #f0f2f5;
-                    border-radius: 6px;
-                    transition: all 0.3s ease;
-                    display: inline-block;
                 }
-                .contract-link:hover {
-                    background: #667eea;
+
+                .modal-body .add-product-btn:hover {
+                    background: #4caf50;
                     color: white;
-                    text-decoration: none;
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
                 }
-                .contract-product-section {
-                    background: #f8f9fa;
-                    padding: 20px;
-                    border-radius: 10px;
-                    margin-bottom: 20px;
-                    border: 2px solid #e1e5e9;
-                }
-                .product-schedule-container {
-                    min-height: 50px;
+
+                .modal-body .contract-details {
                     padding: 10px;
-                    background: white;
-                    border-radius: 8px;
-                    border: 1px dashed #ddd;
+                }
+
+                .modal-body .contract-details p {
+                    margin: 12px 0;
+                    color: ${labelColor};
+                    font-size: 15px;
+                    line-height: 1.6;
+                }
+
+                .modal-body .contract-details h4 {
+                    color: ${textColor};
+                    margin: 20px 0 15px;
+                    font-size: 18px;
+                    font-weight: 600;
+                }
+
+                .modal-body select.form-control {
+                    width: 100%;
+                    padding: 10px;
+                    border: 1px solid ${borderColor};
+                    border-radius: 3px;
+                    background: ${inputBg};
+                    color: ${textColor};
+                    font-size: 14px;
+                    margin-top: 10px;
+                }
+
+                .modal-body select.form-control:focus {
+                    outline: none;
+                    border-color: ${isDark ? '#666' : '#667eea'};
+                }
+
+                .modal-content::-webkit-scrollbar {
+                    width: 8px;
+                }
+
+                .modal-content::-webkit-scrollbar-track {
+                    background: ${isDark ? '#0a0a0a' : '#f0f0f0'};
+                }
+
+                .modal-content::-webkit-scrollbar-thumb {
+                    background: ${isDark ? '#333' : '#999'};
+                    border-radius: 4px;
+                }
+
+                .modal-content::-webkit-scrollbar-thumb:hover {
+                    background: ${isDark ? '#555' : '#666'};
                 }
             </style>
         `;
@@ -284,12 +315,14 @@ function showNotification(message, type = 'info') {
         top: 20px; 
         right: 20px; 
         padding: 15px 20px; 
-        background: ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#2196f3'}; 
+        background: #1a1a1a; 
         color: white; 
         border-radius: 5px; 
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.8); 
         z-index: 2000; 
         animation: slideIn 0.3s ease;
+        border: 1px solid #333;
+        border-left: 4px solid ${type === 'success' ? '#4caf50' : type === 'error' ? '#f44336' : '#9e9e9e'};
     `;
     
     document.body.appendChild(notification);
@@ -297,7 +330,7 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
-    }, CONFIG.NOTIFICATION_DURATION);
+    }, typeof CONFIG !== 'undefined' ? CONFIG.NOTIFICATION_DURATION : 3000);
 }
 
 function debounce(func, wait) {
@@ -326,7 +359,47 @@ function initNavbarBrandClick() {
     }
 }
 
+function initThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+    
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    applyTheme(savedTheme);
+    
+    themeToggle.addEventListener('click', () => {
+        const isDark = document.body.classList.contains('dark-theme');
+        const newTheme = isDark ? 'light' : 'dark';
+        applyTheme(newTheme);
+    });
+}
+
+function applyTheme(theme) {
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (theme === 'light') {
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+        if (themeToggle) {
+            themeToggle.textContent = '🌙';
+            themeToggle.title = 'Переключить на тёмную тему';
+        }
+        localStorage.setItem('theme', 'light');
+    } else {
+        document.body.classList.add('dark-theme');
+        document.body.classList.remove('light-theme');
+        if (themeToggle) {
+            themeToggle.textContent = '☀️';
+            themeToggle.title = 'Переключить на светлую тему';
+        }
+        localStorage.setItem('theme', 'dark');
+    }
+    
+    document.getElementById('modalStyles')?.remove();
+}
+
 window.showNotification = showNotification;
 window.debounce = debounce;
 window.initNavbarBrandClick = initNavbarBrandClick;
+window.initThemeToggle = initThemeToggle;
+window.applyTheme = applyTheme;
 window.modal = modal;
