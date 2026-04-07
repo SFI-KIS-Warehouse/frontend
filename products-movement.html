@@ -8,53 +8,110 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<body>
+<body class="dark-theme">
     <nav class="navbar">
         <div class="navbar-brand">Aboba Warehouse</div>
         <div class="navbar-menu">
             <span id="userName">Пользователь</span>
+            <button id="themeToggle" title="Переключить тему">☀️</button>
             <button id="logoutBtn" class="logout-button">🚪 Выйти</button>
         </div>
     </nav>
 
     <div class="products-container">
-        <div class="products-header">
-            <div>
-                <h1>📦 Товары и движения</h1>
-                <p>Управление товарами и операциями на складе</p>
+        <!-- Вкладки -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="products">📦 Товары</button>
+            <button class="tab-btn" data-tab="schedule">📅 График поставок</button>
+        </div>
+
+        <!-- Вкладка Товары -->
+        <div id="productsTab" class="tab-content active">
+            <div class="products-header">
+                <div>
+                    <h1>📦 Товары и движения</h1>
+                    <p>Управление товарами и операциями на складе</p>
+                </div>
+                <div class="quick-actions">
+                    <button class="quick-action-btn income" onclick="openIncomeModal()">➕ Приход товара</button>
+                    <button class="quick-action-btn outcome" onclick="openOutcomeModal()">➖ Расход товара</button>
+                </div>
             </div>
-            <div class="quick-actions">
-                <button class="quick-action-btn income" onclick="openIncomeModal()">➕ Приход товара</button>
-                <button class="quick-action-btn outcome" onclick="openOutcomeModal()">➖ Расход товара</button>
+
+            <div class="search-section">
+                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Поиск товаров...">
+                <select id="filterSelect" class="filter-select">
+                    <option value="all">Все товары</option>
+                    <option value="critical">Критический остаток</option>
+                    <option value="in-stock">В наличии</option>
+                    <option value="out-of-stock">Нет в наличии</option>
+                </select>
+            </div>
+
+            <div class="products-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Наименование</th>
+                            <th>Ед. изм.</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody">
+                        <tr>
+                            <td colspan="4" class="loading">Загрузка...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="search-section">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Поиск товаров...">
-            <select id="filterSelect" class="filter-select">
-                <option value="all">Все товары</option>
-                <option value="critical">Критический остаток</option>
-                <option value="in-stock">В наличии</option>
-                <option value="out-of-stock">Нет в наличии</option>
-            </select>
-        </div>
+        <!-- Вкладка График поставок -->
+        <div id="scheduleTab" class="tab-content">
+            <div class="tab-header">
+                <h2>📅 График поставок</h2>
+                <div class="action-buttons">
+                    <button id="receiptButton" class="btn btn-success" onclick="openReceiptModal()" style="display: none;">
+                        📥 Поступление
+                    </button>
+                    <button class="btn btn-primary" onclick="loadDeliverySchedule()">🔄 Обновить</button>
+                </div>
+            </div>
+            
+            <div class="search-section">
+                <input type="text" id="scheduleSearchInput" class="search-input" placeholder="🔍 Поиск по товарам...">
+                <select id="scheduleFilterSelect" class="filter-select">
+                    <option value="all">Все статусы</option>
+                    <option value="overdue">Просрочка</option>
+                    <option value="today">Сегодня</option>
+                    <option value="upcoming">Ожидается</option>
+                    <option value="future">Запланировано</option>
+                    <option value="received">Поступило</option>
+                </select>
+            </div>
 
-        <div class="products-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Наименование</th>
-                        <th>Ед. изм.</th>
-                        <th>Статус</th>
-                    </tr>
-                </thead>
-                <tbody id="productsTableBody">
-                    <tr>
-                        <td colspan="4" class="loading">Загрузка...</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="products-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">
+                                <input type="checkbox" id="selectAllSchedule" onchange="toggleSelectAllSchedule()">
+                            </th>
+                            <th>Дата</th>
+                            <th>Название товара</th>
+                            <th>Количество</th>
+                            <th>Договор</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody id="scheduleTableBody">
+                        <tr>
+                            <td colspan="6" class="loading">Загрузка...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
