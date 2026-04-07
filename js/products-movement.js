@@ -100,8 +100,6 @@ function setupEventListeners() {
 async function loadProducts(search = '', filter = 'all') {
     try {
         products = await api.getProducts();
-        
-        // ✅ Сохраняем товары глобально для использования в отгрузке
         window.products = products;
         
         console.log('✅ Загружено товаров:', products.length);
@@ -467,10 +465,8 @@ async function handleReceiptSubmit(e) {
     }
 }
 
-// ✅ ИСПРАВЛЕНА ФУНКЦИЯ: Отгрузка товаров
 async function openOutcomeModal() {
     try {
-        // ✅ Загружаем товары напрямую и сохраняем глобально
         const loadedProducts = await api.getProducts();
         window.products = loadedProducts;
         products = loadedProducts;
@@ -483,7 +479,7 @@ async function openOutcomeModal() {
         }
 
         const productOptions = loadedProducts.map(product => {
-            const stock = product.criticalBalance || 0;
+            const stock = product.stock || product.criticalBalance || 0;
             const unitName = product.unit?.name || 'шт.';
             const productName = product.name || `Товар #${product.id}`;
             
@@ -524,10 +520,8 @@ async function openOutcomeModal() {
         modal.show(modalContent);
         window.outcomeItemCounter = 0;
         
-        // Добавляем первую позицию
         addOutcomeItem();
         
-        // Обработчик формы
         document.getElementById('outcomeForm').addEventListener('submit', handleOutcomeSubmit);
         
     } catch (error) {
@@ -536,9 +530,7 @@ async function openOutcomeModal() {
     }
 }
 
-// ✅ ИСПРАВЛЕНА ФУНКЦИЯ: Добавление позиции отгрузки
 function addOutcomeItem() {
-    // ✅ Берём товары из глобальной переменной
     const products = window.products || [];
     
     console.log('addOutcomeItem - товаров:', products.length);
@@ -551,7 +543,7 @@ function addOutcomeItem() {
     const itemId = `outcome_item_${window.outcomeItemCounter++}`;
     
     const productOptions = products.map(product => {
-        const stock = product.criticalBalance || 0;
+        const stock = product.stock || product.criticalBalance || 0;
         const unitName = product.unit?.name || 'шт.';
         const productName = product.name || `Товар #${product.id}`;
         
