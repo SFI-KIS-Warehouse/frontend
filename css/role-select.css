@@ -1,6 +1,5 @@
-/* ============ Стили для страницы выбора роли ============ */
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #0a0a0a;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -11,13 +10,14 @@ body {
 }
 
 .role-container {
-    background: white;
-    border-radius: 30px;
-    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+    background: #1a1a1a;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
     width: 100%;
     max-width: 1200px;
     padding: 60px 50px;
     animation: fadeIn 0.6s ease;
+    border: 1px solid #333;
 }
 
 .role-header {
@@ -26,17 +26,14 @@ body {
 }
 
 .role-header h1 {
-    color: #333;
+    color: white;
     font-size: 36px;
     margin-bottom: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    font-weight: 700;
 }
 
 .role-header p {
-    color: #666;
+    color: #b0b0b0;
     font-size: 18px;
 }
 
@@ -48,33 +45,31 @@ body {
 }
 
 .role-card {
-    background: #f8f9fa;
-    border-radius: 20px;
+    background: #0a0a0a;
+    border-radius: 10px;
     padding: 40px 30px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 3px solid transparent;
+    transition: all 0.4s ease;
+    border: 2px solid #333;
     position: relative;
     overflow: hidden;
     outline: none;
 }
 
 .role-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.3);
+    transform: translateY(-5px);
+    border-color: #555;
 }
 
 .role-card:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #555;
 }
 
 .role-card.selected {
-    border-color: #667eea;
-    background: white;
-    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
-    transform: scale(1.02);
+    border-color: white;
+    background: #1a1a1a;
 }
 
 .role-card.selected::before {
@@ -84,8 +79,8 @@ body {
     right: 20px;
     width: 30px;
     height: 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: white;
+    color: #0a0a0a;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -97,22 +92,21 @@ body {
 .role-icon {
     font-size: 64px;
     margin-bottom: 25px;
-    transform: scale(1);
-    transition: transform 0.3s ease;
+    filter: grayscale(100%);
 }
 
 .role-card:hover .role-icon {
-    transform: scale(1.1);
+    filter: grayscale(0%);
 }
 
 .role-card h2 {
-    color: #333;
+    color: white;
     font-size: 26px;
     margin-bottom: 15px;
 }
 
 .role-card p {
-    color: #666;
+    color: #b0b0b0;
     font-size: 15px;
     line-height: 1.6;
     margin-bottom: 25px;
@@ -121,12 +115,12 @@ body {
 .role-badge {
     display: inline-block;
     padding: 8px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #2d2d2d;
     color: white;
-    border-radius: 30px;
+    border-radius: 3px;
     font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    border: 1px solid #444;
 }
 
 .role-features {
@@ -138,9 +132,9 @@ body {
 
 .role-features li {
     padding: 10px 0;
-    color: #555;
+    color: #b0b0b0;
     font-size: 14px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #333;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -152,7 +146,7 @@ body {
 
 .role-features li::before {
     content: "✓";
-    color: #667eea;
+    color: white;
     font-weight: bold;
     font-size: 16px;
 }
@@ -160,7 +154,7 @@ body {
 .remember-choice {
     text-align: center;
     margin: 30px 0 20px;
-    color: #666;
+    color: #b0b0b0;
 }
 
 .remember-choice label {
@@ -170,42 +164,41 @@ body {
     gap: 10px;
     font-size: 15px;
     padding: 10px 20px;
-    background: #f8f9fa;
-    border-radius: 30px;
+    background: #0a0a0a;
+    border-radius: 5px;
     transition: background 0.3s ease;
+    border: 1px solid #333;
 }
 
 .remember-choice label:hover {
-    background: #e9ecef;
+    background: #1a1a1a;
 }
 
 .remember-choice input[type="checkbox"] {
     width: 18px;
     height: 18px;
     cursor: pointer;
-    accent-color: #667eea;
 }
 
 .continue-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #2d2d2d;
     color: white;
-    border: none;
+    border: 1px solid #444;
     padding: 18px 50px;
     font-size: 20px;
     font-weight: 600;
-    border-radius: 15px;
+    border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: block;
     width: 100%;
     max-width: 350px;
     margin: 30px auto 0;
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
 }
 
 .continue-button:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+    background: #3d3d3d;
+    border-color: #555;
 }
 
 .continue-button:active:not(:disabled) {
@@ -215,27 +208,19 @@ body {
 .continue-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    box-shadow: none;
 }
 
-.back-button {
-    display: inline-block;
-    margin-top: 30px;
-    color: #667eea;
-    text-decoration: none;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    padding: 10px 20px;
-    border-radius: 30px;
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.back-button:hover {
-    background: #f0f2f5;
-    text-decoration: none;
-    transform: translateX(-5px);
-}
-
-/* Адаптивность */
 @media (max-width: 768px) {
     .role-container {
         padding: 30px 20px;
@@ -244,24 +229,24 @@ body {
     .role-header h1 {
         font-size: 28px;
     }
-    
+
     .role-header p {
         font-size: 16px;
     }
-    
+
     .role-cards {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    
+
     .role-card {
         padding: 30px 20px;
     }
-    
+
     .role-card h2 {
         font-size: 22px;
     }
-    
+
     .continue-button {
         padding: 15px 30px;
         font-size: 18px;
@@ -277,11 +262,11 @@ body {
     .role-header h1 {
         font-size: 24px;
     }
-    
+
     .role-icon {
         font-size: 48px;
     }
-    
+
     .role-features li {
         font-size: 13px;
         padding: 8px 0;
