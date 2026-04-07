@@ -1,30 +1,29 @@
-/* ============ Стили для панели менеджера ============ */
 .manager-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* ============ Вкладки ============ */
 .tabs {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
-    background: white;
+    background: #1a1a1a;
     padding: 10px;
-    border-radius: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     flex-wrap: wrap;
+    border: 1px solid #333;
 }
 
 .tab-btn {
-    padding: 12px 24px;
-    background: transparent;
-    border: 2px solid #ddd;
-    border-radius: 10px;
+    padding: 14px 28px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 3px;
     font-size: 15px;
     font-weight: 600;
-    color: #666;
+    color: #b0b0b0;
     cursor: pointer;
     transition: all 0.3s ease;
     flex: 1;
@@ -33,51 +32,58 @@
 }
 
 .tab-btn:hover {
-    background: #f0f2f5;
-    color: #333;
-    border-color: #333;
+    background: #1a1a1a;
+    color: white;
+    border-color: #555;
 }
 
 .tab-btn.active {
-    background: #1a1a1a;
+    background: #2d2d2d;
     color: white;
-    border-color: #1a1a1a;
-    box-shadow: 0 4px 12px rgba(26, 26, 26, 0.3);
+    border-color: #555;
 }
 
 .tab-content {
     display: none;
     animation: fadeIn 0.4s ease;
+    background: #1a1a1a;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
 }
 
 .tab-content.active {
     display: block;
 }
 
-/* ============ Заголовки вкладок ============ */
 .tab-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
+    padding: 20px;
+    background: #0a0a0a;
+    border-radius: 5px;
+    border: 1px solid #333;
 }
 
 .tab-header h2 {
-    color: #333;
+    color: white;
     font-size: 24px;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0;
 }
 
-/* ============ Таблицы данных ============ */
 .table-container {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     overflow-x: auto;
     margin: 20px 0;
+    border: 1px solid #333;
 }
 
 .data-table {
@@ -87,40 +93,97 @@
 }
 
 .data-table th {
-    background: #1a1a1a;
+    background: #0a0a0a;
     color: white;
     padding: 16px;
     text-align: left;
     font-weight: 600;
     font-size: 14px;
     white-space: nowrap;
+    border-bottom: 2px solid #333;
 }
 
 .data-table td {
     padding: 16px;
-    border-bottom: 1px solid #e9ecef;
-    color: #333;
+    border-bottom: 1px solid #333;
+    color: #e0e0e0;
 }
 
 .data-table tbody tr:hover {
-    background: #f8f9fa;
+    background: #2d2d2d;
 }
 
 .data-table .loading {
     text-align: center;
-    color: #999;
+    color: #666;
     padding: 50px;
     font-style: italic;
 }
 
 .data-table .error {
     text-align: center;
-    color: #dc3545;
+    color: #f44336;
     padding: 50px;
     font-weight: 500;
 }
 
-/* ============ Кнопки действий ============ */
+.products-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    cursor: help;
+    position: relative;
+}
+
+.product-tag {
+    background: #2d2d2d;
+    color: #e0e0e0;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #444;
+    transition: all 0.3s ease;
+}
+
+.product-tag:hover {
+    background: #3d3d3d;
+    border-color: #666;
+}
+
+.product-more {
+    background: #2d2d2d;
+    color: #9e9e9e;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px dashed #444;
+}
+
+.products-list[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: #1a1a1a;
+    color: #e0e0e0;
+    padding: 12px 16px;
+    border-radius: 5px;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-line;
+    z-index: 1000;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+    border: 1px solid #333;
+    min-width: 200px;
+    max-width: 400px;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease;
+    margin-bottom: 8px;
+}
+
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -129,145 +192,78 @@
 
 .btn-icon {
     padding: 8px 16px;
-    border: 2px solid #ddd;
-    border-radius: 6px;
+    border: 1px solid #333;
+    border-radius: 3px;
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: white;
-    color: #333;
+    background: #1a1a1a;
+    color: #e0e0e0;
 }
 
 .btn-icon:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background: #1a1a1a;
+    background: #2d2d2d;
+    border-color: #555;
+}
+
+.btn-icon.btn-view {
+    border-color: #2196f3;
+    color: #2196f3;
+}
+
+.btn-icon.btn-view:hover {
+    background: #2196f3;
     color: white;
-    border-color: #1a1a1a;
 }
 
 .btn-icon.btn-success {
-    background: #28a745;
-    border-color: #28a745;
-    color: white;
+    border: 1px solid #4caf50;
+    color: #4caf50;
+    background: #1a1a1a;
 }
 
 .btn-icon.btn-success:hover {
-    background: #218838;
-    border-color: #218838;
+    background: #4caf50;
     color: white;
+    border-color: #4caf50;
 }
 
-/* ============ Детали договора ============ */
 .contract-details {
-    padding: 10px;
+    padding: 15px;
+    background: #0a0a0a;
+    border-radius: 5px;
+    border: 1px solid #333;
 }
 
 .contract-details p {
     margin: 12px 0;
-    color: #555;
+    color: #b0b0b0;
     font-size: 15px;
     line-height: 1.6;
 }
 
 .contract-details h4 {
-    color: #333;
-    margin: 20px 0 15px;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-/* ============ Статусы ============ */
-.status-badge {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.status-created {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.status-approved {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-signed {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.status-cancelled {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* ============ Статусы графика поставок ============ */
-.status-overdue {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.status-today {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeaa7;
-}
-
-.status-upcoming {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.status-future {
-    background: #e2e3e5;
-    color: #383d41;
-    border: 1px solid #d6d8db;
-}
-
-/* ============ Кликабельная ссылка договора ============ */
-.contract-link {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: 600;
-    padding: 6px 12px;
-    background: #f0f2f5;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    display: inline-block;
-}
-
-.contract-link:hover {
-    background: #667eea;
     color: white;
-    text-decoration: none;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+    margin: 25px 0 15px;
+    font-size: 18px;
+    font-weight: 700;
 }
 
-/* ============ Секции товаров в графике ============ */
 .contract-product-section {
-    background: #f8f9fa;
+    background: #0a0a0a;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-bottom: 20px;
-    border: 2px solid #e1e5e9;
+    border: 1px solid #333;
     transition: all 0.3s ease;
 }
 
 .contract-product-section:hover {
-    border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    border-color: #555;
 }
 
 .product-section-header {
@@ -275,31 +271,31 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ddd;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
 }
 
 .product-section-header h4 {
     margin: 0;
-    color: #333;
+    color: white;
     font-size: 16px;
     font-weight: 600;
 }
 
 .product-schedule-container {
     min-height: 50px;
-    padding: 10px;
-    background: white;
-    border-radius: 8px;
-    border: 1px dashed #ddd;
+    padding: 15px;
+    background: #1a1a1a;
+    border-radius: 5px;
+    border: 1px dashed #333;
 }
 
 .schedule-row-item {
-    background: white;
+    background: #1a1a1a;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 5px;
     margin-top: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #333;
     display: grid;
     grid-template-columns: 1fr 1fr auto;
     gap: 15px;
@@ -308,8 +304,7 @@
 }
 
 .schedule-row-item:hover {
-    border-color: #667eea;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    border-color: #555;
 }
 
 .schedule-row {
@@ -318,85 +313,42 @@
 }
 
 .schedule-row:hover {
-    background: #f0f2f5;
+    background: #2d2d2d;
 }
 
 .schedule-row.received {
-    background: #e8f5e9;
+    background: #1a2e1a;
 }
 
-/* ============ Кнопки ============ */
-.btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
+.contract-link {
+    color: #2196f3;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 8px 16px;
+    background: #1a1a1a;
+    border-radius: 3px;
     transition: all 0.3s ease;
+    display: inline-block;
+    border: 1px solid #333;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.contract-link:hover {
+    background: #2d2d2d;
     color: white;
+    border-color: #555;
 }
 
-.btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #5a6268;
-}
-
-.btn-success {
-    background: #28a745;
-    color: white;
-}
-
-.btn-success:hover {
-    background: #218838;
-}
-
-.btn-danger {
-    background: #dc3545;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #c82333;
-}
-
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 13px;
-}
-
-.btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* ============ Товары в договоре ============ */
 .product-item {
-    background: #f8f9fa;
-    border: 2px solid #ddd;
-    border-radius: 12px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 5px;
     padding: 20px;
     margin-bottom: 15px;
     transition: all 0.3s ease;
 }
 
 .product-item:hover {
-    border-color: #667eea;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    border-color: #555;
 }
 
 .product-item-header {
@@ -404,12 +356,12 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ddd;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
 }
 
 .product-item-header h4 {
-    color: #333;
+    color: white;
     font-size: 16px;
     font-weight: 600;
     margin: 0;
@@ -417,13 +369,13 @@
 
 .remove-btn {
     background: none;
-    border: 2px solid #dc3545;
-    color: #dc3545;
+    border: 1px solid #f44336;
+    color: #f44336;
     font-size: 24px;
     cursor: pointer;
     padding: 0 8px;
     transition: all 0.3s ease;
-    border-radius: 50%;
+    border-radius: 3px;
     width: 36px;
     height: 36px;
     display: flex;
@@ -432,17 +384,16 @@
 }
 
 .remove-btn:hover {
-    background: #dc3545;
+    background: #f44336;
     color: white;
-    transform: rotate(90deg);
 }
 
 .add-product-btn {
-    background: #28a745;
-    color: white;
-    border: none;
+    background: #1a1a1a;
+    color: #4caf50;
+    border: 1px solid #4caf50;
     padding: 14px;
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: pointer;
     width: 100%;
     margin: 15px 0 10px;
@@ -456,66 +407,10 @@
 }
 
 .add-product-btn:hover {
-    background: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    background: #4caf50;
+    color: white;
 }
 
-/* ============ Формы ============ */
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-/* ============ Анимации ============ */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* ============ Адаптивность ============ */
 @media (max-width: 768px) {
     .manager-container {
         padding: 10px;
@@ -550,6 +445,16 @@
     .btn-icon {
         width: 100%;
         justify-content: center;
+    }
+
+    .products-list {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .product-tag {
+        font-size: 11px;
+        padding: 3px 8px;
     }
 }
 
