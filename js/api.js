@@ -66,6 +66,7 @@ class ApiClient {
         return await response.text();
     }
 
+    // ============ User ============
     async login(login, password) {
         const response = await this.fetchWithTimeout(
             `${this.baseURL}/api/users/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
@@ -77,6 +78,7 @@ class ApiClient {
         return await response.text();
     }
 
+    // ============ Providers ============
     async getProviders() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers`, {
             headers: this.getHeaders()
@@ -100,6 +102,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ============ Units ============
     async getUnits() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/units`, {
             headers: this.getHeaders()
@@ -122,6 +125,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ============ Products ============
     async getProducts() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/products`, {
             headers: this.getHeaders()
@@ -145,6 +149,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ============ Contracts ============
     async getContracts() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/contracts`, {
             headers: this.getHeaders()
@@ -176,6 +181,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ============ Shipments ============
     async getShipments() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments`, {
             headers: this.getHeaders()
@@ -207,6 +213,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ============ Receipt Orders ============
     async getReceiptOrders() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/receipts`, {
             headers: this.getHeaders()
@@ -230,6 +237,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ============ Delivery Schedule ============
     async getDeliverySchedule() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
             headers: this.getHeaders()
@@ -255,4 +263,3 @@ class ApiClient {
 }
 
 const api = new ApiClient();
-
