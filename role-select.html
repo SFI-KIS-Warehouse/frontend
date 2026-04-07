@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Выбор роли - Aboba Warehouse</title>
-    <link rel="stylesheet" href="role-select.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/role-select.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="dark-theme">
     <div class="role-container">
         <div class="role-header">
             <h1>Добро пожаловать в Aboba Warehouse!</h1>
@@ -15,7 +15,6 @@
         </div>
         
         <div class="role-cards">
-            <!-- Менеджер -->
             <div class="role-card" id="managerCard" tabindex="0">
                 <div class="role-icon">👔</div>
                 <h2>Панель менеджера</h2>
@@ -25,11 +24,10 @@
                     <li>Управление поставщиками</li>
                     <li>Управление товарами</li>
                     <li>Управление договорами</li>
-                    <li>Отчеты и аналитика</li>
+                    <li>График поставок</li>
                 </ul>
             </div>
             
-            <!-- Оператор товаров -->
             <div class="role-card" id="operatorCard" tabindex="0">
                 <div class="role-icon">📦</div>
                 <h2>Товары и движения</h2>
@@ -39,14 +37,13 @@
                     <li>Просмотр товаров</li>
                     <li>Приход товара</li>
                     <li>Расход товара</li>
-                    <li>Инвентаризация</li>
                 </ul>
             </div>
         </div>
         
         <div class="remember-choice">
             <label>
-                <input type="checkbox" id="rememberRole" checked>
+                <input type="checkbox" id="rememberRole">
                 Запомнить выбор
             </label>
         </div>
@@ -54,10 +51,10 @@
         <button class="continue-button" id="continueBtn" disabled>Продолжить</button>
     </div>
 
-    <script src="config.js"></script>
-    <script src="api.js"></script>
-    <script src="auth.js"></script>
-    <script src="components.js"></script>
-    <script src="role-select.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/role-select.js"></script>
 </body>
 </html>
