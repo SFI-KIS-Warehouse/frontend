@@ -5,31 +5,109 @@
     padding: 20px;
 }
 
+/* ============ Вкладки ============ */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    background: #1a1a1a;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    flex-wrap: wrap;
+    border: 1px solid #333;
+}
+
+.tab-btn {
+    padding: 14px 28px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 3px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #b0b0b0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 120px;
+    white-space: nowrap;
+}
+
+.tab-btn:hover {
+    background: #1a1a1a;
+    color: white;
+    border-color: #555;
+}
+
+.tab-btn.active {
+    background: #2d2d2d;
+    color: white;
+    border-color: #555;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
 /* ============ Заголовок ============ */
 .products-header {
-    background: white;
+    background: #1a1a1a;
     padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
+    border: 1px solid #333;
 }
 
 .products-header h1 {
-    color: #333;
+    color: white;
     font-size: 28px;
     margin: 0 0 8px 0;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .products-header p {
-    color: #666;
+    color: #b0b0b0;
     font-size: 16px;
     margin: 0;
+}
+
+/* ============ Заголовки вкладок ============ */
+.tab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    background: #1a1a1a;
+    border-radius: 5px;
+    border: 1px solid #333;
+}
+
+.tab-header h2 {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.tab-header .action-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 /* ============ Быстрые действия ============ */
@@ -41,8 +119,8 @@
 
 .quick-action-btn {
     padding: 14px 28px;
-    border: none;
-    border-radius: 12px;
+    border: 1px solid #333;
+    border-radius: 5px;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
@@ -50,22 +128,28 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #1a1a1a;
+    color: #e0e0e0;
 }
 
 .quick-action-btn.income {
-    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+.quick-action-btn.income:hover {
+    background: #4caf50;
     color: white;
 }
 
 .quick-action-btn.outcome {
-    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-    color: white;
+    border-color: #f44336;
+    color: #f44336;
 }
 
-.quick-action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+.quick-action-btn.outcome:hover {
+    background: #f44336;
+    color: white;
 }
 
 .quick-action-btn:active {
@@ -74,10 +158,11 @@
 
 /* ============ Таблица товаров ============ */
 .products-table {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #1a1a1a;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     overflow-x: auto;
+    border: 1px solid #333;
 }
 
 .products-table table {
@@ -86,107 +171,384 @@
 }
 
 .products-table th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #0a0a0a;
     padding: 16px;
     text-align: left;
     font-weight: 600;
     color: white;
     font-size: 14px;
     white-space: nowrap;
+    border-bottom: 2px solid #333;
 }
 
 .products-table td {
     padding: 16px;
-    border-bottom: 1px solid #e9ecef;
-    color: #333;
+    border-bottom: 1px solid #333;
+    color: #e0e0e0;
 }
 
 .products-table tbody tr:hover {
-    background: #f8f9fa;
+    background: #2d2d2d;
 }
 
 /* Критический остаток */
 .products-table .critical {
-    background: #fff3cd;
+    background: #2e2e1a;
     animation: pulse 2s infinite;
 }
 
 .products-table .critical td {
-    color: #856404;
+    color: #f6e05e;
 }
 
 .products-table .critical:hover {
-    background: #ffe69c;
+    background: #3d3d2e;
 }
 
 @keyframes pulse {
     0% {
-        background: #fff3cd;
+        background: #2e2e1a;
     }
     50% {
-        background: #ffe69c;
+        background: #3d3d2e;
     }
     100% {
-        background: #fff3cd;
+        background: #2e2e1a;
     }
 }
 
 /* Бейдж единицы измерения */
 .unit-badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #2d2d2d;
+    color: #e0e0e0;
     padding: 6px 12px;
-    border-radius: 20px;
+    border-radius: 3px;
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
+    border: 1px solid #444;
 }
 
 /* ============ Поиск и фильтры ============ */
 .search-section {
-    background: white;
+    background: #1a1a1a;
     padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     margin-bottom: 25px;
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
+    border: 1px solid #333;
 }
 
 .search-input {
     flex: 1;
     min-width: 280px;
     padding: 14px 18px;
-    border: 2px solid #e1e5e9;
-    border-radius: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
     font-size: 15px;
     transition: all 0.3s ease;
-    color: #333;
+    color: #e0e0e0;
+    background: #0a0a0a;
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #666;
+    background: #1a1a1a;
 }
 
 .filter-select {
     padding: 14px 18px;
-    border: 2px solid #e1e5e9;
-    border-radius: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
     font-size: 15px;
     min-width: 200px;
-    background: white;
+    background: #0a0a0a;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: #333;
+    color: #e0e0e0;
 }
 
 .filter-select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #666;
+}
+
+/* ============ Статусы ============ */
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #333;
+    background: #1a1a1a;
+}
+
+.status-warning {
+    color: #ff9800;
+    border-color: #ff9800;
+}
+
+.status-normal {
+    color: #4caf50;
+    border-color: #4caf50;
+}
+
+.status-overdue {
+    color: #f44336;
+    border-color: #f44336;
+}
+
+.status-today {
+    color: #ff9800;
+    border-color: #ff9800;
+}
+
+.status-upcoming {
+    color: #4caf50;
+    border-color: #4caf50;
+}
+
+.status-future {
+    color: #9e9e9e;
+    border-color: #9e9e9e;
+}
+
+/* ============ Кнопки действий ============ */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: 1px solid #333;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.action-btn:hover {
+    background: #2d2d2d;
+    border-color: #555;
+}
+
+/* ============ Кликабельная ссылка договора ============ */
+.contract-link {
+    color: #2196f3;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 8px 16px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    border: 1px solid #333;
+}
+
+.contract-link:hover {
+    background: #2d2d2d;
+    color: white;
+    border-color: #555;
+}
+
+/* ============ Кнопка Поступление ============ */
+#receiptButton {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: 1px solid #4caf50;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+}
+
+#receiptButton:hover:not(:disabled) {
+    background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.6);
+}
+
+#receiptButton:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+#receiptButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ============ Строки товаров в модальном окне ============ */
+.receipt-product-row {
+    background: #0a0a0a;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.receipt-product-row:hover {
+    border-color: #4caf50;
+}
+
+.receipt-entry-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 15px;
+    align-items: end;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #1a1a1a;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.receipt-entry-row:hover {
+    background: #2d2d2d;
+}
+
+.receipt-entry-row .form-group {
+    margin-bottom: 0;
+}
+
+.receipt-entry-row .form-group label {
+    color: #b0b0b0;
+    font-size: 12px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.receipt-entry-row .form-group input {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border: 1px solid #4caf50;
+    padding: 8px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.receipt-entry-row .form-group input:focus {
+    outline: none;
+    border-color: #68d391;
+}
+
+.receipt-entry-row .form-group input:disabled {
+    background: #2d2d2d;
+    color: #9e9e9e;
+    border-color: #444;
+    cursor: not-allowed;
+}
+
+/* ============ Форма отгрузки ============ */
+.outcome-item {
+    background: #0a0a0a;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #333;
+    transition: all 0.3s ease;
+}
+
+.outcome-item:hover {
+    border-color: #f56565;
+}
+
+.outcome-item .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 15px;
+}
+
+.outcome-item .form-group {
+    margin-bottom: 0;
+}
+
+.outcome-item .form-group label {
+    color: #b0b0b0;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.outcome-item .form-group input,
+.outcome-item .form-group select {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 3px;
+    width: 100%;
+}
+
+.outcome-item .form-group input:focus,
+.outcome-item .form-group select:focus {
+    outline: none;
+    border-color: #f56565;
+}
+
+.stock-warning {
+    color: #f44336;
+    font-size: 11px;
+    margin-top: 4px;
+    display: none;
+}
+
+/* ============ Чекбоксы в таблице ============ */
+.schedule-select {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #4caf50;
+}
+
+.schedule-select:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* ============ Строки таблицы ============ */
+.schedule-row {
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.schedule-row:hover {
+    background: #2d2d2d;
+}
+
+.schedule-row.received {
+    background: #1a2e1a;
+}
+
+.schedule-row.selected {
+    background: #1a3a52;
+}
+
+/* ============ Анимации ============ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ============ Адаптивность ============ */
@@ -218,6 +580,37 @@
 
     .filter-select {
         width: 100%;
+    }
+    
+    .tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+    }
+    
+    .tab-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .tab-header .action-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    #receiptButton {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .receipt-entry-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .outcome-item .form-row {
+        grid-template-columns: 1fr;
     }
 }
 
