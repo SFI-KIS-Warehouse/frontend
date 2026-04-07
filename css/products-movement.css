@@ -1,11 +1,9 @@
-/* ============ Стили для страницы товаров и движений ============ */
 .products-container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* ============ Вкладки ============ */
 .tabs {
     display: flex;
     gap: 10px;
@@ -54,7 +52,6 @@
     display: block;
 }
 
-/* ============ Заголовок ============ */
 .products-header {
     background: #1a1a1a;
     padding: 30px;
@@ -82,7 +79,6 @@
     margin: 0;
 }
 
-/* ============ Заголовки вкладок ============ */
 .tab-header {
     display: flex;
     justify-content: space-between;
@@ -110,7 +106,6 @@
     flex-wrap: wrap;
 }
 
-/* ============ Быстрые действия ============ */
 .quick-actions {
     display: flex;
     gap: 15px;
@@ -156,7 +151,6 @@
     transform: translateY(0);
 }
 
-/* ============ Таблица товаров ============ */
 .products-table {
     background: #1a1a1a;
     border-radius: 5px;
@@ -191,7 +185,6 @@
     background: #2d2d2d;
 }
 
-/* Критический остаток */
 .products-table .critical {
     background: #2e2e1a;
     animation: pulse 2s infinite;
@@ -217,7 +210,6 @@
     }
 }
 
-/* Бейдж единицы измерения */
 .unit-badge {
     background: #2d2d2d;
     color: #e0e0e0;
@@ -229,7 +221,6 @@
     border: 1px solid #444;
 }
 
-/* ============ Поиск и фильтры ============ */
 .search-section {
     background: #1a1a1a;
     padding: 20px;
@@ -277,7 +268,6 @@
     border-color: #666;
 }
 
-/* ============ Статусы ============ */
 .status-badge {
     display: inline-block;
     padding: 6px 12px;
@@ -318,7 +308,6 @@
     border-color: #9e9e9e;
 }
 
-/* ============ Кнопки действий ============ */
 .action-buttons {
     display: flex;
     gap: 8px;
@@ -341,7 +330,6 @@
     border-color: #555;
 }
 
-/* ============ Кликабельная ссылка договора ============ */
 .contract-link {
     color: #2196f3;
     text-decoration: none;
@@ -360,7 +348,6 @@
     border-color: #555;
 }
 
-/* ============ Кнопка Поступление ============ */
 #receiptButton {
     background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     color: white;
@@ -393,7 +380,6 @@
     transform: none;
 }
 
-/* ============ Строки товаров в модальном окне ============ */
 .receipt-product-row {
     background: #0a0a0a;
     padding: 15px;
@@ -455,7 +441,6 @@
     cursor: not-allowed;
 }
 
-/* ============ Форма отгрузки ============ */
 .outcome-item {
     background: #0a0a0a;
     padding: 15px;
@@ -508,7 +493,6 @@
     display: none;
 }
 
-/* ============ Чекбоксы в таблице ============ */
 .schedule-select {
     width: 18px;
     height: 18px;
@@ -521,7 +505,6 @@
     opacity: 0.5;
 }
 
-/* ============ Строки таблицы ============ */
 .schedule-row {
     cursor: pointer;
     transition: background 0.2s ease;
@@ -539,7 +522,6 @@
     background: #1a3a52;
 }
 
-/* ============ Анимации ============ */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -551,7 +533,6 @@
     }
 }
 
-/* ============ Адаптивность ============ */
 @media (max-width: 768px) {
     .products-header {
         flex-direction: column;
