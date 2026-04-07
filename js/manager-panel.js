@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAllData();
     
     initNavbarBrandClick();
+    initThemeToggle();
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
         authService.logout();
@@ -73,7 +74,6 @@ async function loadAllData() {
     }
 }
 
-// ============ Providers ============
 async function loadProviders() {
     try {
         providers = await api.getProviders();
@@ -219,7 +219,6 @@ function showAddProviderModal() {
     });
 }
 
-// ============ Units ============
 async function loadUnits() {
     try {
         units = await api.getUnits();
@@ -294,7 +293,6 @@ function showAddUnitModal() {
     });
 }
 
-// ============ Products ============
 async function loadProducts() {
     try {
         products = await api.getProducts();
@@ -392,7 +390,6 @@ function showAddProductModal() {
     }
 }
 
-// ============ Contracts ============
 async function loadContracts() {
     try {
         contracts = await api.getContracts();
@@ -414,24 +411,50 @@ function renderContractsTable() {
         return;
     }
 
-    tbody.innerHTML = contracts.map(contract => `
-        <tr>
-            <td>${contract.id}</td>
-            <td>${contract.provider?.name || '-'}</td>
-            <td>
-                <span class="status-badge status-${CONFIG.CONTRACT_STATUSES[contract.status]?.class || 'created'}">
-                    ${CONFIG.CONTRACT_STATUSES[contract.status]?.name || 'Неизвестно'}
-                </span>
-            </td>
-            <td>${contract.productInfo?.length || 0}</td>
-            <td>
-                <div class="action-buttons">
-                    <button class="btn-icon btn-view" onclick="viewContract(${contract.id})">👁️ Просмотр</button>
-                    <button class="btn-icon btn-success" onclick="openAddScheduleModal(${contract.id})">📅 График</button>
-                </div>
-            </td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = contracts.map(contract => {
+        const productList = contract.productInfo || [];
+        const productCount = productList.length;
+        const productNames = productList.map(info => 
+            info.product?.name || `Товар #${info.product}`
+        );
+        
+        const maxVisible = 3;
+        const visibleProducts = productNames.slice(0, maxVisible);
+        const hiddenCount = productCount - maxVisible;
+        
+        let productsHtml = visibleProducts.map(name => 
+            `<span class="product-tag">${name}</span>`
+        ).join('');
+        
+        if (hiddenCount > 0) {
+            productsHtml += `<span class="product-more">+${hiddenCount} ещё</span>`;
+        }
+        
+        const tooltip = productNames.join('\n');
+
+        return `
+            <tr>
+                <td>${contract.id}</td>
+                <td>${contract.provider?.name || '-'}</td>
+                <td>
+                    <span class="status-badge status-${CONFIG.CONTRACT_STATUSES[contract.status]?.class || 'created'}">
+                        ${CONFIG.CONTRACT_STATUSES[contract.status]?.name || 'Неизвестно'}
+                    </span>
+                </td>
+                <td>
+                    <div class="products-list" title="${tooltip}">
+                        ${productsHtml}
+                    </div>
+                </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-view" onclick="viewContract(${contract.id})">👁️ Просмотр</button>
+                        <button class="btn-icon btn-success" onclick="openAddScheduleModal(${contract.id})">📅 График</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 async function viewContract(id) {
@@ -525,7 +548,6 @@ async function changeContractStatus(id) {
     }
 }
 
-// ============ Delivery Schedule ============
 async function loadDeliverySchedule() {
     try {
         deliverySchedule = await api.getDeliverySchedule();
@@ -546,10 +568,10 @@ function getScheduleStatus(dateStr) {
     scheduleDate.setHours(0, 0, 0, 0);
     const diffDays = Math.ceil((scheduleDate - today) / (1000 * 60 * 60 * 24));
     
-    if (diffDays < 0) return { class: 'status-overdue', icon: '🔴', text: 'Просрочка' };
-    if (diffDays === 0) return { class: 'status-today', icon: '🟡', text: 'Сегодня' };
-    if (diffDays <= 7) return { class: 'status-upcoming', icon: '🟢', text: 'Ожидается' };
-    return { class: 'status-future', icon: '⚪', text: 'Запланировано' };
+    if (diffDays < 0) return { class: 'status-overdue', icon: '🔴', text: 'Просрочка', key: 'overdue' };
+    if (diffDays === 0) return { class: 'status-today', icon: '🟡', text: 'Сегодня', key: 'today' };
+    if (diffDays <= 7) return { class: 'status-upcoming', icon: '🟢', text: 'Ожидается', key: 'upcoming' };
+    return { class: 'status-future', icon: '⚪', text: 'Запланировано', key: 'future' };
 }
 
 function renderScheduleTable() {
@@ -613,11 +635,11 @@ function openAddScheduleModal(contractId) {
     }
 
     const productSections = contract.productInfo?.map((info, index) => `
-        <div class="contract-product-section" style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 2px solid #e1e5e9;">
-            <div class="product-section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #ddd;">
-                <h4 style="margin: 0; color: #333;">
+        <div class="contract-product-section">
+            <div class="product-section-header">
+                <h4>
                     📦 ${info.product?.name || 'Товар #' + info.product}
-                    <span style="font-size: 12px; color: #666; font-weight: normal;">(в договоре: ${info.count} ${info.product?.unit?.name || 'шт.'})</span>
+                    <span style="font-size: 12px; color: #b0b0b0; font-weight: normal;">(в договоре: ${info.count} ${info.product?.unit?.name || 'шт.'})</span>
                 </h4>
                 <button type="button" class="btn btn-sm btn-success" onclick="addScheduleRowForProduct(${info.product?.id || info.product}, '${(info.product?.name || 'Товар').replace(/'/g, "\\'")}')">
                     ➕ Добавить дату
@@ -628,14 +650,14 @@ function openAddScheduleModal(contractId) {
             <input type="hidden" class="product-id" value="${info.product?.id || info.product}">
             <input type="hidden" class="product-name" value="${info.product?.name || 'Товар'}">
         </div>
-    `).join('') || '<p style="color: #666; text-align: center;">Нет товаров в договоре</p>';
+    `).join('') || '<p style="color: #b0b0b0; text-align: center;">Нет товаров в договоре</p>';
 
     const modalContent = {
         title: `📅 График для договора #${contractId}`,
         body: `
             <form id="addScheduleForm" data-contract-id="${contractId}">
-                <div style="margin-bottom: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3;">
-                    <p style="margin: 0; color: #1565c0; font-weight: 500;">
+                <div style="margin-bottom: 20px; padding: 15px; background: #0a0a0a; border-radius: 5px; border-left: 4px solid #2196f3;">
+                    <p style="margin: 0; color: #b0b0b0; font-weight: 500;">
                         ℹ️ Добавьте даты поставки для каждого товара из договора.
                     </p>
                 </div>
@@ -644,7 +666,7 @@ function openAddScheduleModal(contractId) {
                     ${productSections}
                 </div>
                 
-                <div class="form-actions" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #ddd;">
+                <div class="form-actions">
                     <button type="button" class="btn btn-secondary" onclick="modal.hide()">Отмена</button>
                     <button type="submit" class="btn btn-primary">💾 Сохранить график</button>
                 </div>
@@ -666,14 +688,14 @@ function addScheduleRowForProduct(productId, productName) {
     const rowId = `schedule_row_${window.scheduleRowCounter++}`;
 
     const rowHtml = `
-        <div class="schedule-row-item" id="${rowId}" style="background: white; padding: 15px; border-radius: 8px; margin-top: 10px; border: 1px solid #ddd; display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end;">
+        <div class="schedule-row-item" id="${rowId}">
             <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 13px; color: #555;">Дата *</label>
-                <input type="date" class="schedule-date" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <label style="font-size: 13px; color: #b0b0b0;">Дата *</label>
+                <input type="date" class="schedule-date" required style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 3px;">
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 13px; color: #555;">Количество *</label>
-                <input type="number" class="schedule-count" min="1" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                <label style="font-size: 13px; color: #b0b0b0;">Количество *</label>
+                <input type="number" class="schedule-count" min="1" required style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 3px;">
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <button type="button" class="btn btn-danger" onclick="removeScheduleRow('${rowId}')" style="padding: 10px 15px; height: 42px;">🗑️</button>
@@ -873,7 +895,6 @@ function removeProductFromContract(id) {
     }
 }
 
-// Глобальные функции
 window.showAddProviderModal = showAddProviderModal;
 window.showAddUnitModal = showAddUnitModal;
 window.showAddProductModal = showAddProductModal;
