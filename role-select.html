@@ -7,7 +7,10 @@
     <link rel="stylesheet" href="css/role-select.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="dark-theme">
+<body>
+    <!-- Плавающая кнопка переключения темы -->
+    <button id="themeToggle" class="floating-theme-toggle" title="Переключить тему">🌙</button>
+
     <div class="role-container">
         <div class="role-header">
             <h1>Добро пожаловать в Aboba Warehouse!</h1>
@@ -56,5 +59,10 @@
     <script src="js/auth.js"></script>
     <script src="js/components.js"></script>
     <script src="js/role-select.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initThemeToggle();
+        });
+    </script>
 </body>
 </html>
