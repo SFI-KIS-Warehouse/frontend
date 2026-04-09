@@ -3,6 +3,7 @@
  */
 let products = [];
 let deliverySchedule = [];
+let receiptOrders = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!authService.isAuthenticated()) {
@@ -54,6 +55,8 @@ function setupTabs() {
             
             if (tabId === 'schedule') {
                 loadDeliverySchedule();
+            } else if (tabId === 'receipts') {
+                loadReceiptOrders();
             }
         });
     });
@@ -97,12 +100,11 @@ function setupEventListeners() {
     }
 }
 
+// ==================== Товары ====================
 async function loadProducts(search = '', filter = 'all') {
     try {
         products = await api.getProducts();
         window.products = products;
-        
-        console.log('✅ Загружено товаров:', products.length);
         
         let filteredProducts = [...products];
         
@@ -113,14 +115,11 @@ async function loadProducts(search = '', filter = 'all') {
         }
         
         if (filter === 'critical') {
-            filteredProducts = filteredProducts.filter(p => 
-                p.criticalBalance > 0
-            );
+            filteredProducts = filteredProducts.filter(p => p.criticalBalance > 0);
         }
         
         renderProductsTable(filteredProducts);
     } catch (error) {
-        console.error('Load products error:', error);
         document.getElementById('productsTableBody').innerHTML = 
             '<tr><td colspan="4" class="error">Ошибка загрузки</td></tr>';
     }
@@ -151,22 +150,17 @@ function renderProductsTable(productsToShow) {
     }).join('');
 }
 
+// ==================== График поставок ====================
 async function loadDeliverySchedule() {
     try {
         deliverySchedule = await api.getDeliverySchedule();
         const searchInput = document.getElementById('scheduleSearchInput');
         const filterSelect = document.getElementById('scheduleFilterSelect');
-        renderScheduleTable(
-            searchInput?.value || '',
-            filterSelect?.value || 'all'
-        );
+        renderScheduleTable(searchInput?.value || '', filterSelect?.value || 'all');
         updateReceiptButton();
     } catch (error) {
-        const tbody = document.getElementById('scheduleTableBody');
-        if (tbody) {
-            tbody.innerHTML = '<tr><td colspan="6" class="error">Ошибка загрузки</td></tr>';
-        }
-        console.error('Load schedule error:', error);
+        document.getElementById('scheduleTableBody').innerHTML = 
+            '<tr><td colspan="6" class="error">Ошибка загрузки</td></tr>';
     }
 }
 
@@ -223,9 +217,7 @@ function renderScheduleTable(search = '', filter = 'all') {
     const groupedByContract = {};
     sorted.forEach(entry => {
         const contractId = entry.contract;
-        if (!groupedByContract[contractId]) {
-            groupedByContract[contractId] = [];
-        }
+        if (!groupedByContract[contractId]) groupedByContract[contractId] = [];
         groupedByContract[contractId].push(entry);
     });
     
@@ -243,19 +235,15 @@ function renderScheduleTable(search = '', filter = 'all') {
         return `
             <tr class="schedule-row ${isReceived ? 'received' : ''}" data-id="${entry.id}">
                 <td>
-                    <input type="checkbox" 
-                           class="schedule-select" 
-                           value="${entry.id}" 
-                           ${isReceived ? 'disabled' : ''}
-                           onchange="updateReceiptButton()">
+                    <input type="checkbox" class="schedule-select" value="${entry.id}" 
+                           ${isReceived ? 'disabled' : ''} onchange="updateReceiptButton()">
                 </td>
                 <td>${new Date(entry.date).toLocaleDateString('ru-RU')}</td>
                 <td title="${allProductsInContract}">${entry.product?.name || 'Товар #' + entry.product}</td>
                 <td>${quantityWithUnit}</td>
                 <td>
-                    <a href="#" class="contract-link" onclick="openContractFromSchedule(${entry.contract}); return false;" title="${allProductsInContract}">
-                        #${entry.contract}
-                    </a>
+                    <a href="#" class="contract-link" onclick="openContractFromSchedule(${entry.contract}); return false;" 
+                       title="${allProductsInContract}">#${entry.contract}</a>
                 </td>
                 <td>
                     <span class="status-badge ${status.class}">
@@ -286,6 +274,68 @@ function updateReceiptButton() {
     }
 }
 
+// ==================== Приходные ордера ====================
+async function loadReceiptOrders() {
+    try {
+        receiptOrders = await api.getReceiptOrders();
+        renderReceiptsTable();
+    } catch (error) {
+        document.getElementById('receiptsTableBody').innerHTML = 
+            '<tr><td colspan="4" class="error">Ошибка загрузки</td></tr>';
+    }
+}
+
+function renderReceiptsTable() {
+    const tbody = document.getElementById('receiptsTableBody');
+    if (!tbody) return;
+    
+    if (!receiptOrders || receiptOrders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="loading">Нет данных</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = receiptOrders.map(order => {
+        const productList = order.productInfo || [];
+        const productCount = productList.length;
+        
+        const productNames = productList.map(info => {
+            const productName = info.product?.name || `Товар #${info.product}`;
+            const unitName = info.product?.unit?.name || 'шт.';
+            return `${productName} (${info.count} ${unitName})`;
+        });
+        
+        const maxVisible = 3;
+        const visibleProducts = productNames.slice(0, maxVisible);
+        const hiddenCount = productCount - maxVisible;
+        
+        let productsHtml = visibleProducts.map(name => 
+            `<span class="product-tag">${name}</span>`
+        ).join('');
+        
+        if (hiddenCount > 0) {
+            productsHtml += `<span class="product-more">+${hiddenCount} ещё</span>`;
+        }
+        
+        const tooltip = productNames.join('\n');
+        const providerName = order.provider?.name || 'Не указан';
+        const timeStr = order.time ? new Date(order.time).toLocaleString('ru-RU') : '—';
+
+        return `
+            <tr>
+                <td>${order.id}</td>
+                <td>${timeStr}</td>
+                <td>${providerName}</td>
+                <td>
+                    <div class="products-list" title="${tooltip}">
+                        ${productsHtml}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// ==================== Модальные окна ====================
 function openReceiptModal() {
     const checkboxes = document.querySelectorAll('.schedule-select:checked:not(:disabled)');
     const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
@@ -330,31 +380,29 @@ function openReceiptModal() {
     
     const productRows = Object.values(groupedByProduct).map(item => {
         return `
-            <div class="receipt-product-row" style="background: #0a0a0a; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #333;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333;">
-                    <h4 style="margin: 0; color: white;">📦 ${item.productName}</h4>
-                    <span style="color: #b0b0b0; font-size: 13px;">Ед. изм.: ${item.unitName}</span>
+            <div class="receipt-product-row">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);">
+                    <h4 style="margin: 0; color: var(--text-primary);">📦 ${item.productName}</h4>
+                    <span style="color: var(--text-secondary); font-size: 13px;">Ед. изм.: ${item.unitName}</span>
                 </div>
                 
                 ${item.entries.map((entry) => `
-                    <div class="receipt-entry-row" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 15px; align-items: end; margin-bottom: 10px; padding: 10px; background: #1a1a1a; border-radius: 3px;">
+                    <div class="receipt-entry-row">
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label style="color: #b0b0b0; font-size: 12px;">Поставка #${entry.id}</label>
-                            <div style="color: #e0e0e0; font-size: 13px;">
+                            <label>Поставка #${entry.id}</label>
+                            <div style="color: var(--text-secondary); font-size: 13px;">
                                 📅 ${new Date(entry.date).toLocaleDateString('ru-RU')}
                             </div>
                             <input type="hidden" class="entry-id" value="${entry.id}">
                             <input type="hidden" class="entry-contract" value="${entry.contract}">
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label style="color: #b0b0b0; font-size: 12px;">Плановое количество</label>
-                            <input type="text" value="${entry.plannedCount} ${item.unitName}" disabled 
-                                   style="background: #2d2d2d; color: #9e9e9e; border: 1px solid #444; padding: 8px; border-radius: 3px; width: 100%;">
+                            <label>Плановое количество</label>
+                            <input type="text" value="${entry.plannedCount} ${item.unitName}" disabled>
                         </div>
                         <div class="form-group" style="margin-bottom: 0;">
-                            <label style="color: #b0b0b0; font-size: 12px;">Фактическое количество *</label>
-                            <input type="number" class="actual-count" min="0" value="${entry.plannedCount}" 
-                                   style="background: #1a1a1a; color: #e0e0e0; border: 1px solid #4caf50; padding: 8px; border-radius: 3px; width: 100%;">
+                            <label>Фактическое количество *</label>
+                            <input type="number" class="actual-count" min="0" value="${entry.plannedCount}">
                         </div>
                     </div>
                 `).join('')}
@@ -369,10 +417,10 @@ function openReceiptModal() {
         title: '📥 Оформление поступления',
         body: `
             <form id="receiptForm">
-                <div style="margin-bottom: 20px; padding: 15px; background: #0a0a0a; border-radius: 5px; border-left: 4px solid #4caf50;">
-                    <p style="margin: 0; color: #b0b0b0; font-size: 14px;">
-                        ℹ️ Выбрано поставок: <strong style="color: white;">${selectedEntries.length}</strong> | 
-                        Товаров: <strong style="color: white;">${Object.keys(groupedByProduct).length}</strong>
+                <div style="margin-bottom: 20px; padding: 15px; background: var(--bg-tertiary); border-radius: 5px; border-left: 4px solid var(--success-color);">
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">
+                        ℹ️ Выбрано поставок: <strong>${selectedEntries.length}</strong> | 
+                        Товаров: <strong>${Object.keys(groupedByProduct).length}</strong>
                     </p>
                 </div>
                 
@@ -380,8 +428,8 @@ function openReceiptModal() {
                     ${productRows}
                 </div>
                 
-                <div style="margin-top: 20px; padding: 15px; background: #0a0a0a; border-radius: 5px; border: 1px solid #333;">
-                    <div style="display: flex; justify-content: space-between; color: #e0e0e0;">
+                <div style="margin-top: 20px; padding: 15px; background: var(--bg-tertiary); border-radius: 5px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-primary);">
                         <span>Итого позиций:</span>
                         <span id="totalItems">${selectedEntries.length}</span>
                     </div>
@@ -396,7 +444,6 @@ function openReceiptModal() {
     };
     
     modal.show(modalContent);
-    
     document.getElementById('receiptForm').addEventListener('submit', handleReceiptSubmit);
 }
 
@@ -404,24 +451,19 @@ async function handleReceiptSubmit(e) {
     e.preventDefault();
     
     const receiptItems = document.querySelectorAll('.receipt-entry-row');
-    
     if (receiptItems.length === 0) {
         showNotification('Нет позиций для оформления', 'error');
         return;
     }
     
     const receiptData = [];
-    
     for (const item of receiptItems) {
         const entryIdInput = item.querySelector('.entry-id');
         const actualCountInput = item.querySelector('.actual-count');
         
-        if (!entryIdInput?.value || !actualCountInput?.value) {
-            continue;
-        }
+        if (!entryIdInput?.value || !actualCountInput?.value) continue;
         
         const actualCount = parseInt(actualCountInput.value);
-        
         if (actualCount < 0) {
             showNotification('Количество не может быть отрицательным', 'error');
             return;
@@ -446,17 +488,13 @@ async function handleReceiptSubmit(e) {
         }
         
         const result = await api.createReceiptOrder(receiptData);
-        
         modal.hide();
         await loadDeliverySchedule();
         await loadProducts();
-        
         showNotification(`Поступление оформлено! Создано ордеров: ${Array.isArray(result) ? result.length : 1}`, 'success');
-        
     } catch (error) {
         console.error('Create receipt error:', error);
         showNotification(error.message || 'Ошибка при оформлении поступления', 'error');
-        
         const submitBtn = e.target.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -471,8 +509,6 @@ async function openOutcomeModal() {
         window.products = loadedProducts;
         products = loadedProducts;
         
-        console.log('✅ Загружено товаров для отгрузки:', loadedProducts.length);
-        
         if (!loadedProducts || loadedProducts.length === 0) {
             showNotification('Нет товаров для отгрузки. Добавьте товары в панели менеджера.', 'warning');
             return;
@@ -482,33 +518,20 @@ async function openOutcomeModal() {
             const stock = product.stock || product.criticalBalance || 0;
             const unitName = product.unit?.name || 'шт.';
             const productName = product.name || `Товар #${product.id}`;
-            
-            return `
-                <option value="${product.id}" 
-                        data-name="${productName}" 
-                        data-stock="${stock}"
-                        data-unit="${unitName}">
-                    ${productName} (Доступно: ${stock} ${unitName})
-                </option>
-            `;
+            return `<option value="${product.id}" data-name="${productName}" data-stock="${stock}" data-unit="${unitName}">${productName} (Доступно: ${stock} ${unitName})</option>`;
         }).join('');
 
         const modalContent = {
             title: '📤 Отгрузка товаров',
             body: `
                 <form id="outcomeForm">
-                    <div style="margin-bottom: 20px; padding: 15px; background: #0a0a0a; border-radius: 5px; border-left: 4px solid #f56565;">
-                        <p style="margin: 0; color: #b0b0b0; font-size: 14px;">
+                    <div style="margin-bottom: 20px; padding: 15px; background: var(--bg-tertiary); border-radius: 5px; border-left: 4px solid var(--danger-color);">
+                        <p style="margin: 0; color: var(--text-secondary); font-size: 14px;">
                             ⚠️ Система проверит остатки и заблокирует отгрузку, если товара недостаточно
                         </p>
                     </div>
-                    
                     <div id="outcomeItemsContainer"></div>
-                    
-                    <button type="button" class="btn btn-secondary" onclick="addOutcomeItem()" style="margin-top: 10px; width: 100%;">
-                        ➕ Добавить товар
-                    </button>
-                    
+                    <button type="button" class="btn btn-secondary" onclick="addOutcomeItem()" style="margin-top: 10px; width: 100%;">➕ Добавить товар</button>
                     <div class="form-actions">
                         <button type="button" class="btn btn-secondary" onclick="modal.hide()">Отмена</button>
                         <button type="submit" class="btn btn-danger">📤 Подтвердить отгрузку</button>
@@ -519,62 +542,46 @@ async function openOutcomeModal() {
         
         modal.show(modalContent);
         window.outcomeItemCounter = 0;
-        
         addOutcomeItem();
-        
         document.getElementById('outcomeForm').addEventListener('submit', handleOutcomeSubmit);
-        
     } catch (error) {
-        console.error('Open outcome modal error:', error);
         showNotification('Ошибка загрузки данных для отгрузки: ' + error.message, 'error');
     }
 }
 
 function addOutcomeItem() {
     const products = window.products || [];
-    
-    console.log('addOutcomeItem - товаров:', products.length);
-    
     if (!products || products.length === 0) {
         showNotification('Нет товаров для добавления. Обновите страницу.', 'error');
         return;
     }
     
     const itemId = `outcome_item_${window.outcomeItemCounter++}`;
-    
     const productOptions = products.map(product => {
         const stock = product.stock || product.criticalBalance || 0;
         const unitName = product.unit?.name || 'шт.';
         const productName = product.name || `Товар #${product.id}`;
-        
-        return `
-            <option value="${product.id}" 
-                    data-name="${productName}" 
-                    data-stock="${stock}"
-                    data-unit="${unitName}">
-                ${productName} (Доступно: ${stock} ${unitName})
-            </option>
-        `;
+        return `<option value="${product.id}" data-name="${productName}" data-stock="${stock}" data-unit="${unitName}">${productName} (Доступно: ${stock} ${unitName})</option>`;
     }).join('');
 
     const itemHtml = `
-        <div class="outcome-item" id="${itemId}" style="background: #0a0a0a; padding: 15px; border-radius: 5px; margin-top: 10px; border: 1px solid #333;">
+        <div class="outcome-item" id="${itemId}">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <strong style="color: white;">Товар #${window.outcomeItemCounter}</strong>
+                <strong style="color: var(--text-primary);">Товар #${window.outcomeItemCounter}</strong>
                 <button type="button" class="btn btn-danger" onclick="removeOutcomeItem('${itemId}')" style="padding: 5px 10px;">🗑️</button>
             </div>
             <div class="form-row" style="grid-template-columns: 1fr 1fr auto;">
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label style="color: #b0b0b0;">Товар *</label>
+                    <label>Товар *</label>
                     <select class="outcome-product" required onchange="onOutcomeProductSelect('${itemId}')">
                         <option value="">Выберите товар</option>
                         ${productOptions}
                     </select>
                 </div>
                 <div class="form-group" style="margin-bottom: 0;">
-                    <label style="color: #b0b0b0;">Количество *</label>
-                    <input type="number" class="outcome-count" min="1" required placeholder="Шт." style="background: #1a1a1a; color: #e0e0e0; border: 1px solid #333;">
-                    <div class="stock-warning" style="color: #f44336; font-size: 11px; margin-top: 4px; display: none;"></div>
+                    <label>Количество *</label>
+                    <input type="number" class="outcome-count" min="1" required placeholder="Шт.">
+                    <div class="stock-warning" style="color: var(--danger-color); font-size: 11px; margin-top: 4px; display: none;"></div>
                 </div>
                 <div class="form-group" style="margin-bottom: 0; display: flex; align-items: end;">
                     <button type="button" class="btn btn-danger" onclick="removeOutcomeItem('${itemId}')" style="padding: 10px 15px; height: 42px;">🗑️</button>
@@ -586,12 +593,7 @@ function addOutcomeItem() {
         </div>
     `;
     
-    const container = document.getElementById('outcomeItemsContainer');
-    if (container) {
-        container.insertAdjacentHTML('beforeend', itemHtml);
-    } else {
-        console.error('outcomeItemsContainer не найден');
-    }
+    document.getElementById('outcomeItemsContainer')?.insertAdjacentHTML('beforeend', itemHtml);
 }
 
 function onOutcomeProductSelect(itemId) {
@@ -606,9 +608,7 @@ function onOutcomeProductSelect(itemId) {
     const productNameInput = item.querySelector('.product-name');
     const productStockInput = item.querySelector('.product-stock');
     
-    if (!selectedOption || !selectedOption.value) {
-        return;
-    }
+    if (!selectedOption || !selectedOption.value) return;
     
     const stock = parseInt(selectedOption.dataset.stock || '0');
     const unit = selectedOption.dataset.unit || 'шт.';
@@ -625,26 +625,22 @@ function onOutcomeProductSelect(itemId) {
         if (count > stock) {
             stockWarning.style.display = 'block';
             stockWarning.textContent = `⚠️ Недостаточно товара! Доступно: ${stock} ${unit}`;
-            countInput.style.borderColor = '#f44336';
+            countInput.style.borderColor = 'var(--danger-color)';
         } else {
             stockWarning.style.display = 'none';
-            countInput.style.borderColor = '#333';
+            countInput.style.borderColor = 'var(--border-color)';
         }
     };
 }
 
 function removeOutcomeItem(id) {
-    const element = document.getElementById(id);
-    if (element) {
-        element.remove();
-    }
+    document.getElementById(id)?.remove();
 }
 
 async function handleOutcomeSubmit(e) {
     e.preventDefault();
     
     const outcomeItems = document.querySelectorAll('.outcome-item');
-    
     if (outcomeItems.length === 0) {
         showNotification('Добавьте хотя бы один товар', 'error');
         return;
@@ -658,9 +654,7 @@ async function handleOutcomeSubmit(e) {
         const countInput = item.querySelector('.outcome-count');
         const productStockInput = item.querySelector('.product-stock');
         
-        if (!productIdInput?.value || !countInput?.value) {
-            continue;
-        }
+        if (!productIdInput?.value || !countInput?.value) continue;
         
         const count = parseInt(countInput.value);
         const stock = parseInt(productStockInput?.value || '0');
@@ -682,7 +676,6 @@ async function handleOutcomeSubmit(e) {
         showNotification('Нет товаров для отгрузки', 'error');
         return;
     }
-    
     if (hasInsufficientStock) {
         showNotification('Отгрузка заблокирована: недостаточно товаров на складе', 'error');
         return;
@@ -694,18 +687,13 @@ async function handleOutcomeSubmit(e) {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Обработка...';
         }
-        
         const result = await api.createShipment(shipmentData);
-        
         modal.hide();
         await loadProducts();
-        
         showNotification(`Отгрузка оформлена! ID: ${result}`, 'success');
-        
     } catch (error) {
         console.error('Create shipment error:', error);
         showNotification(error.message || 'Ошибка при оформлении отгрузки', 'error');
-        
         const submitBtn = e.target.querySelector('button[type="submit"]');
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -729,7 +717,7 @@ function openIncomeModal() {
     openReceiptModal();
 }
 
-window.openIncomeModal = openIncomeModal;
+// Глобальные функции
 window.openOutcomeModal = openOutcomeModal;
 window.loadDeliverySchedule = loadDeliverySchedule;
 window.toggleSelectAllSchedule = toggleSelectAllSchedule;
@@ -739,3 +727,4 @@ window.openReceiptModal = openReceiptModal;
 window.addOutcomeItem = addOutcomeItem;
 window.removeOutcomeItem = removeOutcomeItem;
 window.onOutcomeProductSelect = onOutcomeProductSelect;
+window.loadReceiptOrders = loadReceiptOrders;
