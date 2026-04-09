@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Товары и движения - Aboba Warehouse</title>
-    <link rel="stylesheet" href="css/products-movement.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/products-movement.css">
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
-<body class="dark-theme">
+<body>
     <nav class="navbar">
         <div class="navbar-brand">Aboba Warehouse</div>
         <div class="navbar-menu">
             <span id="userName">Пользователь</span>
-            <button id="themeToggle" title="Переключить тему">☀️</button>
+            <button id="themeToggle" title="Переключить тему">🌙</button>
             <button id="logoutBtn" class="logout-button">🚪 Выйти</button>
         </div>
     </nav>
@@ -22,8 +22,10 @@
         <div class="tabs">
             <button class="tab-btn active" data-tab="products">📦 Товары</button>
             <button class="tab-btn" data-tab="schedule">📅 График поставок</button>
+            <button class="tab-btn" data-tab="receipts">📥 Приходные ордера</button>
         </div>
 
+        <!-- Вкладка Товары -->
         <div id="productsTab" class="tab-content active">
             <div class="products-header">
                 <div>
@@ -31,7 +33,6 @@
                     <p>Управление товарами и операциями на складе</p>
                 </div>
                 <div class="quick-actions">
-                    <button class="quick-action-btn income" onclick="openIncomeModal()">➕ Приход товара</button>
                     <button class="quick-action-btn outcome" onclick="openOutcomeModal()">➖ Расход товара</button>
                 </div>
             </div>
@@ -57,14 +58,13 @@
                         </tr>
                     </thead>
                     <tbody id="productsTableBody">
-                        <tr>
-                            <td colspan="4" class="loading">Загрузка...</td>
-                        </tr>
+                        <tr><td colspan="4" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- Вкладка График поставок -->
         <div id="scheduleTab" class="tab-content">
             <div class="tab-header">
                 <h2>📅 График поставок</h2>
@@ -92,9 +92,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 40px;">
-                                <input type="checkbox" id="selectAllSchedule" onchange="toggleSelectAllSchedule()">
-                            </th>
+                            <th style="width: 40px;"><input type="checkbox" id="selectAllSchedule" onchange="toggleSelectAllSchedule()"></th>
                             <th>Дата</th>
                             <th>Название товара</th>
                             <th>Количество</th>
@@ -103,9 +101,31 @@
                         </tr>
                     </thead>
                     <tbody id="scheduleTableBody">
+                        <tr><td colspan="6" class="loading">Загрузка...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Вкладка Приходные ордера -->
+        <div id="receiptsTab" class="tab-content">
+            <div class="tab-header">
+                <h2>📥 Приходные ордера</h2>
+                <button class="btn btn-primary" onclick="loadReceiptOrders()">🔄 Обновить</button>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td colspan="6" class="loading">Загрузка...</td>
+                            <th>ID</th>
+                            <th>Время поставки</th>
+                            <th>Поставщик</th>
+                            <th>Товары</th>
                         </tr>
+                    </thead>
+                    <tbody id="receiptsTableBody">
+                        <tr><td colspan="4" class="loading">Загрузка...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -117,5 +137,10 @@
     <script src="js/auth.js"></script>
     <script src="js/components.js"></script>
     <script src="js/products-movement.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initThemeToggle();
+        });
+    </script>
 </body>
 </html>
