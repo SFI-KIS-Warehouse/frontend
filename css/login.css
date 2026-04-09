@@ -4,19 +4,19 @@ body {
     justify-content: center;
     align-items: center;
     margin: 0;
-    background: #0a0a0a;
+    background: var(--bg-primary);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .login-container {
-    background: #1a1a1a;
+    background: var(--card-bg);
     border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 10px 40px var(--shadow-heavy);
     width: 100%;
     max-width: 420px;
     padding: 50px 40px;
     animation: fadeIn 0.5s ease;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
 }
 
 .login-header {
@@ -25,14 +25,14 @@ body {
 }
 
 .login-header h1 {
-    color: white;
+    color: var(--text-primary);
     font-size: 32px;
     margin-bottom: 10px;
     font-weight: 700;
 }
 
 .login-header p {
-    color: #b0b0b0;
+    color: var(--text-secondary);
     font-size: 15px;
 }
 
@@ -43,7 +43,7 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 8px;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     font-weight: 600;
     font-size: 14px;
 }
@@ -51,26 +51,26 @@ body {
 .form-group input {
     width: 100%;
     padding: 14px 16px;
-    border: 1px solid #333;
+    border: 1px solid var(--input-border);
     border-radius: 5px;
     font-size: 15px;
     transition: all 0.3s ease;
-    color: #e0e0e0;
-    background: #0a0a0a;
+    color: var(--text-primary);
+    background: var(--input-bg);
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: #666;
-    background: #1a1a1a;
+    border-color: var(--info-color);
+    background: var(--bg-secondary);
 }
 
 .form-group input.error {
-    border-color: #f44336;
+    border-color: var(--danger-color);
 }
 
 .error-message {
-    color: #f44336;
+    color: var(--danger-color);
     font-size: 12px;
     margin-top: 6px;
     display: none;
@@ -84,9 +84,9 @@ body {
 .login-button {
     width: 100%;
     padding: 16px;
-    background: #2d2d2d;
-    color: white;
-    border: 1px solid #444;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 16px;
     font-weight: 600;
@@ -97,8 +97,7 @@ body {
 }
 
 .login-button:hover {
-    background: #3d3d3d;
-    border-color: #555;
+    opacity: 0.9;
 }
 
 .login-button:active {
@@ -135,7 +134,8 @@ body {
     display: none;
     animation: fadeIn 0.3s ease;
     font-size: 14px;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
 }
 
 .alert.show {
@@ -143,32 +143,29 @@ body {
 }
 
 .alert-error {
-    background: #1a1a1a;
-    color: #f44336;
-    border-color: #f44336;
+    color: var(--danger-color);
+    border-color: var(--danger-color);
 }
 
 .alert-success {
-    background: #1a1a1a;
-    color: #4caf50;
-    border-color: #4caf50;
+    color: var(--success-color);
+    border-color: var(--success-color);
 }
 
 .alert-info {
-    background: #1a1a1a;
-    color: #9e9e9e;
-    border-color: #9e9e9e;
+    color: var(--info-color);
+    border-color: var(--info-color);
 }
 
 .demo-credentials {
-    background: #0a0a0a;
+    background: var(--bg-tertiary);
     padding: 20px;
     border-radius: 5px;
     margin-top: 30px;
     font-size: 13px;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     text-align: center;
-    border: 1px dashed #333;
+    border: 1px dashed var(--border-color);
 }
 
 .demo-credentials p {
@@ -176,7 +173,7 @@ body {
 }
 
 .demo-credentials strong {
-    color: white;
+    color: var(--text-primary);
 }
 
 @keyframes spin {
@@ -216,4 +213,29 @@ body {
     .login-button {
         padding: 14px;
     }
+}
+
+/* Кнопка темы для страницы логина */
+.floating-theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px var(--shadow);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.floating-theme-toggle:hover {
+    transform: scale(1.1);
 }
