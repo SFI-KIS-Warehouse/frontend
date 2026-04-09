@@ -3,6 +3,60 @@
     margin: 0 auto;
     padding: 20px;
 }
+/* Список товаров в таблице (как в договорах) */
+.products-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    cursor: help;
+    position: relative;
+}
+.product-tag {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+.product-tag:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+}
+.product-more {
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px dashed var(--border-color);
+}
+/* Всплывающая подсказка */
+.products-list[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    padding: 12px 16px;
+    border-radius: 5px;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre-line;
+    z-index: 1000;
+    box-shadow: 0 8px 30px var(--shadow-heavy);
+    border: 1px solid var(--border-color);
+    min-width: 200px;
+    max-width: 400px;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease;
+    margin-bottom: 8px;
+}
 
 .tabs {
     display: flex;
