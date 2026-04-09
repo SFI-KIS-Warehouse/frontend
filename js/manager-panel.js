@@ -74,6 +74,7 @@ async function loadAllData() {
     }
 }
 
+// ==================== Поставщики ====================
 async function loadProviders() {
     try {
         providers = await api.getProviders();
@@ -123,6 +124,7 @@ function renderProvidersTable() {
 }
 
 function showAddProviderModal() {
+    // Создаём контент модального окна
     const modalContent = {
         title: 'Добавление поставщика',
         body: `
@@ -132,12 +134,14 @@ function showAddProviderModal() {
                     <input type="text" id="providerName" required>
                 </div>
                 <div class="form-group">
-                    <label>ИНН *</label>
-                    <input type="text" id="providerItn" required maxlength="12" placeholder="10 или 12 цифр">
+                    <label>ИНН * (10 или 12 цифр)</label>
+                    <input type="text" id="providerItn" required placeholder="Только цифры, 10 или 12">
+                    <div class="error-message" id="itnError"></div>
                 </div>
                 <div class="form-group">
-                    <label>БИК *</label>
-                    <input type="text" id="providerBic" required maxlength="9" placeholder="9 цифр">
+                    <label>БИК * (9 цифр)</label>
+                    <input type="text" id="providerBic" required placeholder="Только цифры, ровно 9">
+                    <div class="error-message" id="bicError"></div>
                 </div>
                 <div class="form-group">
                     <label>Расчетный счет *</label>
@@ -161,53 +165,96 @@ function showAddProviderModal() {
     
     modal.show(modalContent);
 
+    // Получаем элементы формы
+    const form = document.getElementById('addProviderForm');
     const innInput = document.getElementById('providerItn');
-    if (innInput) {
-        innInput.addEventListener('input', () => {
-            innInput.value = innInput.value.replace(/\D/g, '');
-        });
-    }
-
     const bicInput = document.getElementById('providerBic');
-    if (bicInput) {
-        bicInput.addEventListener('input', () => {
-            bicInput.value = bicInput.value.replace(/\D/g, '');
-        });
+    const itnError = document.getElementById('itnError');
+    const bicError = document.getElementById('bicError');
+
+    // Функция проверки ИНН
+    function validateInn(value) {
+        const digits = value.replace(/\D/g, '');
+        return digits.length === 10 || digits.length === 12;
     }
 
-    document.getElementById('addProviderForm').addEventListener('submit', async (e) => {
+    // Функция проверки БИК
+    function validateBic(value) {
+        const digits = value.replace(/\D/g, '');
+        return digits.length === 9;
+    }
+
+    // Ограничение ввода только цифрами для ИНН
+    innInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+        // Скрываем ошибку при редактировании
+        itnError.style.display = 'none';
+        this.classList.remove('error');
+    });
+
+    // Ограничение ввода только цифрами для БИК
+    bicInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+        bicError.style.display = 'none';
+        this.classList.remove('error');
+    });
+
+    // Обработчик отправки формы
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        const innValue = document.getElementById('providerItn').value;
-        const bicValue = document.getElementById('providerBic').value;
-        const accountValue = document.getElementById('providerAccount').value;
+        const innValue = innInput.value.trim();
+        const bicValue = bicInput.value.trim();
         
-        if (!innValue || innValue.length === 0) {
-            showNotification('Введите ИНН', 'error');
+        let hasError = false;
+
+        // Проверка ИНН
+        if (!validateInn(innValue)) {
+            itnError.textContent = 'ИНН должен содержать 10 или 12 цифр';
+            itnError.style.display = 'block';
+            innInput.classList.add('error');
+            hasError = true;
+        }
+
+        // Проверка БИК
+        if (!validateBic(bicValue)) {
+            bicError.textContent = 'БИК должен содержать ровно 9 цифр';
+            bicError.style.display = 'block';
+            bicInput.classList.add('error');
+            hasError = true;
+        }
+
+        if (hasError) {
+            showNotification('Проверьте правильность заполнения полей', 'error');
             return;
         }
-        
-        if (!bicValue || bicValue.length === 0) {
-            showNotification('Введите БИК', 'error');
+
+        // Сбор остальных данных
+        const name = document.getElementById('providerName').value.trim();
+        const account = document.getElementById('providerAccount').value.trim();
+        const director = document.getElementById('providerDirector').value.trim();
+        const accountant = document.getElementById('providerAccountant').value.trim();
+
+        if (!name || !account || !director || !accountant) {
+            showNotification('Заполните все обязательные поля', 'error');
             return;
         }
-        
+
         const providerData = {
-            name: document.getElementById('providerName').value,
+            name: name,
             itn: parseInt(innValue, 10),
             bic: parseInt(bicValue, 10),
-            settlementAccount: accountValue.toString(),
-            directorFullName: document.getElementById('providerDirector').value,
-            accountantFullName: document.getElementById('providerAccountant').value
+            settlementAccount: account.toString(),
+            directorFullName: director,
+            accountantFullName: accountant
         };
 
-        try {
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            if (submitBtn) {
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Сохранение...';
-            }
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Сохранение...';
 
+        try {
             const id = await api.addProvider(providerData);
             modal.hide();
             await loadProviders();
@@ -215,10 +262,14 @@ function showAddProviderModal() {
         } catch (error) {
             console.error('Add provider error:', error);
             showNotification(error.message || 'Ошибка при добавлении поставщика', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
         }
     });
 }
 
+// ==================== Единицы измерения ====================
 async function loadUnits() {
     try {
         units = await api.getUnits();
@@ -293,6 +344,7 @@ function showAddUnitModal() {
     });
 }
 
+// ==================== Товары ====================
 async function loadProducts() {
     try {
         products = await api.getProducts();
@@ -390,6 +442,7 @@ function showAddProductModal() {
     }
 }
 
+// ==================== Договоры ====================
 async function loadContracts() {
     try {
         contracts = await api.getContracts();
@@ -548,6 +601,7 @@ async function changeContractStatus(id) {
     }
 }
 
+// ==================== График поставок ====================
 async function loadDeliverySchedule() {
     try {
         deliverySchedule = await api.getDeliverySchedule();
@@ -639,7 +693,7 @@ function openAddScheduleModal(contractId) {
             <div class="product-section-header">
                 <h4>
                     📦 ${info.product?.name || 'Товар #' + info.product}
-                    <span style="font-size: 12px; color: #b0b0b0; font-weight: normal;">(в договоре: ${info.count} ${info.product?.unit?.name || 'шт.'})</span>
+                    <span style="font-size: 12px; color: var(--text-secondary); font-weight: normal;">(в договоре: ${info.count} ${info.product?.unit?.name || 'шт.'})</span>
                 </h4>
                 <button type="button" class="btn btn-sm btn-success" onclick="addScheduleRowForProduct(${info.product?.id || info.product}, '${(info.product?.name || 'Товар').replace(/'/g, "\\'")}')">
                     ➕ Добавить дату
@@ -650,14 +704,14 @@ function openAddScheduleModal(contractId) {
             <input type="hidden" class="product-id" value="${info.product?.id || info.product}">
             <input type="hidden" class="product-name" value="${info.product?.name || 'Товар'}">
         </div>
-    `).join('') || '<p style="color: #b0b0b0; text-align: center;">Нет товаров в договоре</p>';
+    `).join('') || '<p style="color: var(--text-secondary); text-align: center;">Нет товаров в договоре</p>';
 
     const modalContent = {
         title: `📅 График для договора #${contractId}`,
         body: `
             <form id="addScheduleForm" data-contract-id="${contractId}">
-                <div style="margin-bottom: 20px; padding: 15px; background: #0a0a0a; border-radius: 5px; border-left: 4px solid #2196f3;">
-                    <p style="margin: 0; color: #b0b0b0; font-weight: 500;">
+                <div style="margin-bottom: 20px; padding: 15px; background: var(--bg-tertiary); border-radius: 5px; border-left: 4px solid var(--info-color);">
+                    <p style="margin: 0; color: var(--text-secondary); font-weight: 500;">
                         ℹ️ Добавьте даты поставки для каждого товара из договора.
                     </p>
                 </div>
@@ -690,12 +744,12 @@ function addScheduleRowForProduct(productId, productName) {
     const rowHtml = `
         <div class="schedule-row-item" id="${rowId}">
             <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 13px; color: #b0b0b0;">Дата *</label>
-                <input type="date" class="schedule-date" required style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 3px;">
+                <label style="font-size: 13px; color: var(--text-secondary);">Дата *</label>
+                <input type="date" class="schedule-date" required>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label style="font-size: 13px; color: #b0b0b0;">Количество *</label>
-                <input type="number" class="schedule-count" min="1" required style="width: 100%; padding: 10px; border: 1px solid #333; border-radius: 3px;">
+                <label style="font-size: 13px; color: var(--text-secondary);">Количество *</label>
+                <input type="number" class="schedule-count" min="1" required>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <button type="button" class="btn btn-danger" onclick="removeScheduleRow('${rowId}')" style="padding: 10px 15px; height: 42px;">🗑️</button>
@@ -714,6 +768,7 @@ function removeScheduleRow(id) {
     }
 }
 
+// Обработчики форм для графиков и договоров
 document.addEventListener('submit', async (e) => {
     if (e.target.id === 'addScheduleForm') {
         e.preventDefault();
@@ -895,6 +950,7 @@ function removeProductFromContract(id) {
     }
 }
 
+// Глобальные функции
 window.showAddProviderModal = showAddProviderModal;
 window.showAddUnitModal = showAddUnitModal;
 window.showAddProductModal = showAddProductModal;
