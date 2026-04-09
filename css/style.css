@@ -26,6 +26,8 @@
     --warning-color: #ff9800;
     --info-color: #2196f3;
     --modal-overlay: rgba(0, 0, 0, 0.5);
+    --received-bg: #e8f5e9;
+    --received-border: #a5d6a7;
 }
 
 body.dark-theme {
@@ -50,6 +52,8 @@ body.dark-theme {
     --btn-primary-bg: #2d2d2d;
     --btn-primary-text: #ffffff;
     --modal-overlay: rgba(0, 0, 0, 0.85);
+    --received-bg: #1a2e1a;
+    --received-border: #2e7d32;
 }
 
 /* ============ Общие стили ============ */
@@ -73,36 +77,18 @@ body {
 }
 
 @keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes slideOut {
-    from {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    to {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Уведомления */
@@ -122,21 +108,10 @@ body {
     background: var(--bg-secondary);
 }
 
-.notification-success {
-    border-left: 4px solid var(--success-color);
-}
-
-.notification-error {
-    border-left: 4px solid var(--danger-color);
-}
-
-.notification-info {
-    border-left: 4px solid var(--info-color);
-}
-
-.notification-warning {
-    border-left: 4px solid var(--warning-color);
-}
+.notification-success { border-left: 4px solid var(--success-color); }
+.notification-error { border-left: 4px solid var(--danger-color); }
+.notification-info { border-left: 4px solid var(--info-color); }
+.notification-warning { border-left: 4px solid var(--warning-color); }
 
 /* Кнопки */
 .btn {
@@ -160,58 +135,34 @@ body {
     color: var(--btn-primary-text);
     border-color: var(--border-color);
 }
-
-.btn-primary:hover {
-    opacity: 0.9;
-}
+.btn-primary:hover { opacity: 0.9; }
 
 .btn-secondary {
     background: var(--btn-secondary-bg);
     color: var(--btn-secondary-text);
     border-color: var(--border-color);
 }
-
-.btn-secondary:hover {
-    background: var(--bg-tertiary);
-}
+.btn-secondary:hover { background: var(--bg-tertiary); }
 
 .btn-success {
     background: transparent;
     color: var(--success-color);
     border-color: var(--success-color);
 }
-
-.btn-success:hover {
-    background: var(--success-color);
-    color: white;
-}
+.btn-success:hover { background: var(--success-color); color: white; }
 
 .btn-danger {
     background: transparent;
     color: var(--danger-color);
     border-color: var(--danger-color);
 }
+.btn-danger:hover { background: var(--danger-color); color: white; }
 
-.btn-danger:hover {
-    background: var(--danger-color);
-    color: white;
-}
-
-.btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-sm {
-    padding: 8px 16px;
-    font-size: 13px;
-}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
 
 /* Формы */
-.form-group {
-    margin-bottom: 20px;
-}
-
+.form-group { margin-bottom: 20px; }
 .form-group label {
     display: block;
     margin-bottom: 8px;
@@ -219,7 +170,6 @@ body {
     font-weight: 600;
     font-size: 14px;
 }
-
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -232,7 +182,6 @@ body {
     background: var(--input-bg);
     color: var(--text-primary);
 }
-
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -240,11 +189,22 @@ body {
     border-color: var(--info-color);
     background: var(--bg-secondary);
 }
-
 .form-group input.error,
 .form-group select.error,
 .form-group textarea.error {
-    border-color: var(--danger-color);
+    border-color: var(--danger-color) !important;
+}
+
+/* Сообщения об ошибках */
+.error-message {
+    color: var(--danger-color);
+    font-size: 12px;
+    margin-top: 6px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+.error-message.show {
+    display: block;
 }
 
 .form-row {
@@ -252,7 +212,6 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
 }
-
 .form-actions {
     display: flex;
     justify-content: flex-end;
@@ -271,13 +230,11 @@ body {
     margin: 20px 0;
     border: 1px solid var(--border-color);
 }
-
 .data-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
 }
-
 .data-table th {
     background: var(--table-header-bg);
     color: var(--text-primary);
@@ -288,27 +245,19 @@ body {
     border-bottom: 2px solid var(--border-color);
     white-space: nowrap;
 }
-
 .data-table td {
     padding: 16px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
 }
-
-.data-table tbody tr:hover {
-    background: var(--table-row-hover);
-}
-
+.data-table tbody tr:hover { background: var(--table-row-hover); }
 .data-table .loading,
 .data-table .error {
     text-align: center;
     padding: 50px;
     color: var(--text-muted);
 }
-
-.data-table .error {
-    color: var(--danger-color);
-}
+.data-table .error { color: var(--danger-color); }
 
 /* Статусные бейджи */
 .status-badge {
@@ -320,7 +269,6 @@ body {
     border: 1px solid var(--border-color);
     background: var(--bg-secondary);
 }
-
 .status-created { color: #f6e05e; border-color: #f6e05e; }
 .status-approved { color: var(--success-color); border-color: var(--success-color); }
 .status-signed { color: var(--info-color); border-color: var(--info-color); }
@@ -333,31 +281,32 @@ body {
 .status-upcoming { color: var(--success-color); border-color: var(--success-color); }
 .status-future { color: var(--text-muted); border-color: var(--text-muted); }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    .table-container {
-        margin: 0.5rem -1rem;
-        border-radius: 0;
-    }
-    .data-table th,
-    .data-table td {
-        padding: 10px;
-    }
-    .notification {
-        left: 20px;
-        right: 20px;
-        max-width: none;
-    }
+/* Кнопка темы в навбаре */
+#themeToggle {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    padding: 0.5rem 0.8rem;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#themeToggle:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-light);
+    transform: scale(1.05);
 }
 
-@media (max-width: 480px) {
-    .btn {
-        width: 100%;
-    }
+/* Строка графика поставок - получено */
+.schedule-row.received {
+    background: var(--received-bg) !important;
+    border-left: 3px solid var(--received-border);
 }
+.schedule-row.received:hover { background: var(--table-row-hover) !important; }
 
 /* Плавающая кнопка темы для страниц без навбара */
 .floating-theme-toggle {
@@ -379,7 +328,210 @@ body {
     z-index: 1000;
     transition: all 0.3s ease;
 }
+.floating-theme-toggle:hover { transform: scale(1.1); }
 
-.floating-theme-toggle:hover {
-    transform: scale(1.1);
+/* ============ МОДАЛЬНОЕ ОКНО (статические стили) ============ */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: var(--modal-overlay);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+.modal-content {
+    background: var(--bg-secondary);
+    border-radius: 5px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px var(--shadow-heavy);
+    border: 1px solid var(--border-color);
+}
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--table-header-bg);
+}
+.modal-header h3 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 600;
+}
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-close:hover {
+    color: var(--text-primary);
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+}
+.modal-body {
+    padding: 20px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+.modal-body .form-group {
+    margin-bottom: 15px;
+}
+.modal-body .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 14px;
+}
+.modal-body .form-group input,
+.modal-body .form-group select,
+.modal-body .form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 14px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+}
+.modal-body .form-group input:focus,
+.modal-body .form-group select:focus,
+.modal-body .form-group textarea:focus {
+    outline: none;
+    border-color: var(--info-color);
+    background: var(--bg-secondary);
+}
+.modal-body .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+.modal-body .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+.modal-body .product-item {
+    border: 1px solid var(--border-color);
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background: var(--input-bg);
+}
+.modal-body .product-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+.modal-body .product-item-header h4 {
+    color: var(--text-primary);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+}
+.modal-body .remove-btn {
+    background: none;
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0 8px;
+    border-radius: 3px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-body .remove-btn:hover {
+    background: var(--danger-color);
+    color: white;
+}
+.modal-body .add-product-btn {
+    background: transparent;
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+    padding: 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.modal-body .add-product-btn:hover {
+    background: var(--success-color);
+    color: white;
+}
+.modal-body .contract-details p {
+    margin: 12px 0;
+    color: var(--text-secondary);
+    font-size: 15px;
+    line-height: 1.6;
+}
+.modal-body .contract-details h4 {
+    color: var(--text-primary);
+    margin: 20px 0 15px;
+    font-size: 18px;
+    font-weight: 600;
+}
+.modal-body select.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    font-size: 14px;
+    margin-top: 10px;
+}
+.modal-body select.form-control:focus {
+    outline: none;
+    border-color: var(--info-color);
+}
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+.modal-content::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .form-row { grid-template-columns: 1fr; }
+    .table-container { margin: 0.5rem -1rem; border-radius: 0; }
+    .data-table th, .data-table td { padding: 10px; }
+    .notification { left: 20px; right: 20px; max-width: none; }
+}
+@media (max-width: 480px) {
+    .btn { width: 100%; }
 }
