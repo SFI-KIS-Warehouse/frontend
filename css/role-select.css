@@ -1,5 +1,5 @@
 body {
-    background: #0a0a0a;
+    background: var(--bg-primary);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -10,14 +10,14 @@ body {
 }
 
 .role-container {
-    background: #1a1a1a;
+    background: var(--card-bg);
     border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 10px 40px var(--shadow-heavy);
     width: 100%;
     max-width: 1200px;
     padding: 60px 50px;
     animation: fadeIn 0.6s ease;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
 }
 
 .role-header {
@@ -26,14 +26,14 @@ body {
 }
 
 .role-header h1 {
-    color: white;
+    color: var(--text-primary);
     font-size: 36px;
     margin-bottom: 15px;
     font-weight: 700;
 }
 
 .role-header p {
-    color: #b0b0b0;
+    color: var(--text-secondary);
     font-size: 18px;
 }
 
@@ -45,13 +45,13 @@ body {
 }
 
 .role-card {
-    background: #0a0a0a;
+    background: var(--bg-tertiary);
     border-radius: 10px;
     padding: 40px 30px;
     text-align: center;
     cursor: pointer;
     transition: all 0.4s ease;
-    border: 2px solid #333;
+    border: 2px solid var(--border-color);
     position: relative;
     overflow: hidden;
     outline: none;
@@ -59,17 +59,17 @@ body {
 
 .role-card:hover {
     transform: translateY(-5px);
-    border-color: #555;
+    border-color: var(--border-light);
 }
 
 .role-card:focus {
     outline: none;
-    border-color: #555;
+    border-color: var(--info-color);
 }
 
 .role-card.selected {
-    border-color: white;
-    background: #1a1a1a;
+    border-color: var(--text-primary);
+    background: var(--bg-secondary);
 }
 
 .role-card.selected::before {
@@ -79,8 +79,8 @@ body {
     right: 20px;
     width: 30px;
     height: 30px;
-    background: white;
-    color: #0a0a0a;
+    background: var(--text-primary);
+    color: var(--bg-primary);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -100,13 +100,13 @@ body {
 }
 
 .role-card h2 {
-    color: white;
+    color: var(--text-primary);
     font-size: 26px;
     margin-bottom: 15px;
 }
 
 .role-card p {
-    color: #b0b0b0;
+    color: var(--text-secondary);
     font-size: 15px;
     line-height: 1.6;
     margin-bottom: 25px;
@@ -115,12 +115,12 @@ body {
 .role-badge {
     display: inline-block;
     padding: 8px 20px;
-    background: #2d2d2d;
-    color: white;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
     border-radius: 3px;
     font-size: 13px;
     font-weight: 600;
-    border: 1px solid #444;
+    border: 1px solid var(--border-color);
 }
 
 .role-features {
@@ -132,9 +132,9 @@ body {
 
 .role-features li {
     padding: 10px 0;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     font-size: 14px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -146,7 +146,7 @@ body {
 
 .role-features li::before {
     content: "✓";
-    color: white;
+    color: var(--text-primary);
     font-weight: bold;
     font-size: 16px;
 }
@@ -154,7 +154,7 @@ body {
 .remember-choice {
     text-align: center;
     margin: 30px 0 20px;
-    color: #b0b0b0;
+    color: var(--text-secondary);
 }
 
 .remember-choice label {
@@ -164,14 +164,14 @@ body {
     gap: 10px;
     font-size: 15px;
     padding: 10px 20px;
-    background: #0a0a0a;
+    background: var(--bg-tertiary);
     border-radius: 5px;
     transition: background 0.3s ease;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
 }
 
 .remember-choice label:hover {
-    background: #1a1a1a;
+    background: var(--bg-secondary);
 }
 
 .remember-choice input[type="checkbox"] {
@@ -181,9 +181,9 @@ body {
 }
 
 .continue-button {
-    background: #2d2d2d;
-    color: white;
-    border: 1px solid #444;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--border-color);
     padding: 18px 50px;
     font-size: 20px;
     font-weight: 600;
@@ -197,8 +197,7 @@ body {
 }
 
 .continue-button:hover:not(:disabled) {
-    background: #3d3d3d;
-    border-color: #555;
+    opacity: 0.9;
 }
 
 .continue-button:active:not(:disabled) {
