@@ -8,22 +8,22 @@
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
-    background: #1a1a1a;
+    background: var(--card-bg);
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 10px var(--shadow);
     flex-wrap: wrap;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
 }
 
 .tab-btn {
     padding: 14px 28px;
-    background: #0a0a0a;
-    border: 1px solid #333;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
     border-radius: 3px;
     font-size: 15px;
     font-weight: 600;
-    color: #b0b0b0;
+    color: var(--text-secondary);
     cursor: pointer;
     transition: all 0.3s ease;
     flex: 1;
@@ -32,25 +32,25 @@
 }
 
 .tab-btn:hover {
-    background: #1a1a1a;
-    color: white;
-    border-color: #555;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-light);
 }
 
 .tab-btn.active {
-    background: #2d2d2d;
-    color: white;
-    border-color: #555;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border-color: var(--border-light);
 }
 
 .tab-content {
     display: none;
     animation: fadeIn 0.4s ease;
-    background: #1a1a1a;
+    background: var(--card-bg);
     padding: 25px;
     border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    border: 1px solid #333;
+    box-shadow: 0 2px 10px var(--shadow);
+    border: 1px solid var(--border-color);
 }
 
 .tab-content.active {
@@ -65,13 +65,13 @@
     flex-wrap: wrap;
     gap: 20px;
     padding: 20px;
-    background: #0a0a0a;
+    background: var(--bg-tertiary);
     border-radius: 5px;
-    border: 1px solid #333;
+    border: 1px solid var(--border-color);
 }
 
 .tab-header h2 {
-    color: white;
+    color: var(--text-primary);
     font-size: 24px;
     font-weight: 700;
     margin: 0;
