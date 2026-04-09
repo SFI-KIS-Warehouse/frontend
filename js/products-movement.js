@@ -4,6 +4,7 @@
 let products = [];
 let deliverySchedule = [];
 let receiptOrders = [];
+let providers = []; // кэш поставщиков
 
 document.addEventListener('DOMContentLoaded', () => {
     if (!authService.isAuthenticated()) {
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateUserInfo();
     loadProducts();
+    loadProviders(); // загружаем поставщиков для кэша
     setupEventListeners();
     setupTabs();
     
@@ -36,6 +38,15 @@ function updateUserInfo() {
     if (userNameElement) {
         const userInfo = authService.getUserInfo();
         userNameElement.textContent = userInfo?.name || 'Оператор';
+    }
+}
+
+async function loadProviders() {
+    try {
+        providers = await api.getProviders();
+        window.providers = providers;
+    } catch (error) {
+        console.error('Ошибка загрузки поставщиков:', error);
     }
 }
 
@@ -281,7 +292,7 @@ async function loadReceiptOrders() {
         renderReceiptsTable();
     } catch (error) {
         document.getElementById('receiptsTableBody').innerHTML = 
-            '<tr><td colspan="4" class="error">Ошибка загрузки</td></tr>';
+            '<tr><td colspan="5" class="error">Ошибка загрузки</td></tr>';
     }
 }
 
@@ -290,7 +301,7 @@ function renderReceiptsTable() {
     if (!tbody) return;
     
     if (!receiptOrders || receiptOrders.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="loading">Нет данных</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">Нет данных</td></tr>';
         return;
     }
 
@@ -317,7 +328,17 @@ function renderReceiptsTable() {
         }
         
         const tooltip = productNames.join('\n');
-        const providerName = order.provider?.name || 'Не указан';
+        
+        // Определяем имя поставщика
+        let providerName = 'Не указан';
+        if (order.provider) {
+            if (typeof order.provider === 'object' && order.provider.name) {
+                providerName = order.provider.name;
+            } else if (typeof order.provider === 'number') {
+                const provider = providers.find(p => p.id === order.provider);
+                providerName = provider ? provider.name : `Поставщик #${order.provider}`;
+            }
+        }
         const timeStr = order.time ? new Date(order.time).toLocaleString('ru-RU') : '—';
 
         return `
@@ -330,12 +351,110 @@ function renderReceiptsTable() {
                         ${productsHtml}
                     </div>
                 </td>
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn-icon btn-view" onclick="viewReceiptOrder(${order.id})">👁️ Просмотр</button>
+                    </div>
+                </td>
             </tr>
         `;
     }).join('');
 }
 
-// ==================== Модальные окна ====================
+// Просмотр деталей приходного ордера
+async function viewReceiptOrder(id) {
+    try {
+        const order = await api.getReceiptOrder(id);
+        
+        // Получаем имя поставщика
+        let providerName = 'Не указан';
+        if (order.provider) {
+            if (typeof order.provider === 'object' && order.provider.name) {
+                providerName = order.provider.name;
+            } else if (typeof order.provider === 'number') {
+                // Ищем в уже загруженных поставщиках
+                let provider = providers.find(p => p.id === order.provider);
+                if (!provider) {
+                    // Если нет, пробуем загрузить индивидуально
+                    try {
+                        provider = await api.getProvider(order.provider);
+                        if (provider) {
+                            providers.push(provider);
+                            providerName = provider.name;
+                        } else {
+                            providerName = `Поставщик #${order.provider}`;
+                        }
+                    } catch (e) {
+                        providerName = `Поставщик #${order.provider}`;
+                    }
+                } else {
+                    providerName = provider.name;
+                }
+            }
+        }
+        
+        const productInfo = order.productInfo || [];
+        showReceiptModal(order.id, providerName, order.time, productInfo);
+    } catch (error) {
+        showNotification(error.message || 'Ошибка загрузки ордера', 'error');
+    }
+}
+
+function showReceiptModal(orderId, providerName, time, productInfo) {
+    const productRows = productInfo.map(info => {
+        const productName = info.product?.name || `Товар #${info.product?.id || info.product}`;
+        const unitName = info.product?.unit?.name || 'шт.';
+        const contractId = info.contract;
+        
+        return `
+            <tr>
+                <td>${productName}</td>
+                <td>${info.count} ${unitName}</td>
+                <td>
+                    <a href="#" class="contract-link" onclick="openContractFromReceipt(${contractId}); return false;">
+                        #${contractId}
+                    </a>
+                </td>
+            </tr>
+        `;
+    }).join('') || '<tr><td colspan="3" style="text-align: center;">Нет товаров</td></tr>';
+
+    const modalContent = {
+        title: `Приходный ордер №${orderId}`,
+        body: `
+            <div class="contract-details">
+                <p><strong>Поставщик:</strong> ${providerName}</p>
+                <p><strong>Время поставки:</strong> ${time ? new Date(time).toLocaleString('ru-RU') : '—'}</p>
+                
+                <h4>Товары в ордере:</h4>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Товар</th>
+                            <th>Количество</th>
+                            <th>Договор</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productRows}
+                    </tbody>
+                </table>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="modal.hide()">Закрыть</button>
+                </div>
+            </div>
+        `
+    };
+
+    modal.show(modalContent);
+}
+
+function openContractFromReceipt(contractId) {
+    showNotification(`Договор #${contractId}. Просмотр доступен в панели менеджера`, 'info');
+}
+
+// ==================== Модальные окна (без изменений) ====================
 function openReceiptModal() {
     const checkboxes = document.querySelectorAll('.schedule-select:checked:not(:disabled)');
     const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
@@ -728,3 +847,5 @@ window.addOutcomeItem = addOutcomeItem;
 window.removeOutcomeItem = removeOutcomeItem;
 window.onOutcomeProductSelect = onOutcomeProductSelect;
 window.loadReceiptOrders = loadReceiptOrders;
+window.viewReceiptOrder = viewReceiptOrder;
+window.openContractFromReceipt = openContractFromReceipt;
