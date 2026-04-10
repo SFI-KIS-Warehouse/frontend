@@ -66,6 +66,7 @@ class ApiClient {
         return await response.text();
     }
 
+    // ==================== Аутентификация ====================
     async login(login, password) {
         const response = await this.fetchWithTimeout(
             `${this.baseURL}/api/users/login?login=${encodeURIComponent(login)}&password=${encodeURIComponent(password)}`,
@@ -77,6 +78,7 @@ class ApiClient {
         return await response.text();
     }
 
+    // ==================== Поставщики ====================
     async getProviders() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/providers`, {
             headers: this.getHeaders()
@@ -100,6 +102,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ==================== Единицы измерения ====================
     async getUnits() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/units`, {
             headers: this.getHeaders()
@@ -122,6 +125,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ==================== Товары ====================
     async getProducts() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/products`, {
             headers: this.getHeaders()
@@ -145,6 +149,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ==================== Договоры ====================
     async getContracts() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/contracts`, {
             headers: this.getHeaders()
@@ -176,6 +181,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ==================== Отгрузки ====================
     async getShipments() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments`, {
             headers: this.getHeaders()
@@ -196,17 +202,67 @@ class ApiClient {
             headers: this.getHeaders(),
             body: JSON.stringify(shipmentData)
         });
-        return this.handleResponse(response);
+        const result = await this.handleResponse(response);
+        const id = typeof result === 'string' ? parseInt(result, 10) : result;
+        console.log('createShipment result:', result, 'parsed id:', id);
+        return id;
     }
 
     async shipShipment(id) {
-        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
-            method: 'GET',
-            headers: this.getHeaders()
-        });
-        return this.handleResponse(response);
+        if (!id || id === 0) {
+            console.warn('shipShipment: некорректный ID', id);
+            return null;
+        }
+        
+        console.log('shipShipment вызван с ID:', id);
+        
+        // Пробуем GET
+        try {
+            const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
+                method: 'GET',
+                headers: this.getHeaders()
+            });
+            return this.handleResponse(response);
+        } catch (error) {
+            console.warn('GET /shipments/{id}/ship не сработал:', error.message);
+            
+            // Пробуем POST
+            try {
+                const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
+                    method: 'POST',
+                    headers: this.getHeaders()
+                });
+                return this.handleResponse(response);
+            } catch (postError) {
+                console.warn('POST /shipments/{id}/ship не сработал:', postError.message);
+                
+                // Пробуем PUT
+                try {
+                    const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
+                        method: 'PUT',
+                        headers: this.getHeaders()
+                    });
+                    return this.handleResponse(response);
+                } catch (putError) {
+                    console.warn('PUT /shipments/{id}/ship не сработал:', putError.message);
+                    
+                    // Пробуем PATCH
+                    try {
+                        const response = await this.fetchWithTimeout(`${this.baseURL}/api/shipments/${id}/ship`, {
+                            method: 'PATCH',
+                            headers: this.getHeaders()
+                        });
+                        return this.handleResponse(response);
+                    } catch (patchError) {
+                        console.warn('Все методы для shipShipment не сработали');
+                        return null;
+                    }
+                }
+            }
+        }
     }
 
+    // ==================== Приходные ордера ====================
     async getReceiptOrders() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/receipts`, {
             headers: this.getHeaders()
@@ -230,6 +286,7 @@ class ApiClient {
         return this.handleResponse(response);
     }
 
+    // ==================== График поставок ====================
     async getDeliverySchedule() {
         const response = await this.fetchWithTimeout(`${this.baseURL}/api/deliverySchedule`, {
             headers: this.getHeaders()
@@ -249,6 +306,49 @@ class ApiClient {
             method: 'POST',
             headers: this.getHeaders(),
             body: JSON.stringify(entryData)
+        });
+        return this.handleResponse(response);
+    }
+
+    // ==================== Статистика ====================
+    async getProductStats(productIds) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/productStats`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(productIds)
+        });
+        return this.handleResponse(response);
+    }
+
+    // ==================== Пользователи ====================
+    async getUsers() {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/users`, {
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async createUser(userData) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/users/create`, {
+            method: 'POST',
+            headers: this.getHeaders(),
+            body: JSON.stringify(userData)
+        });
+        return this.handleResponse(response);
+    }
+
+    async changeUserRole(id, newRole) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/users/${id}/changeRole?newRole=${encodeURIComponent(newRole)}`, {
+            method: 'GET',
+            headers: this.getHeaders()
+        });
+        return this.handleResponse(response);
+    }
+
+    async deleteUser(id) {
+        const response = await this.fetchWithTimeout(`${this.baseURL}/api/users/${id}/delete`, {
+            method: 'GET',
+            headers: this.getHeaders()
         });
         return this.handleResponse(response);
     }
